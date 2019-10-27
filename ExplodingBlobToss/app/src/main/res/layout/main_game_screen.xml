@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1212">
+
+
+    <ImageView
+        android:id="@+id/left_arrow"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/relativelayout"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow" />
+
+    <ImageView
+        android:id="@+id/front_arrow"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:rotation="90"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/relativelayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.060000002"
+        app:srcCompat="@drawable/ic_arrow" />
+
+    <ImageView
+        android:id="@+id/right_arrow"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:rotation="180"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/relativelayout"
+        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow" />
+
+    <RelativeLayout
+        android:id="@+id/relativelayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:showIn="@layout/main_menu">
+
+
+        <ImageView
+            android:id="@+id/blob_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_blob" />
+
+        <TextView
+            android:id="@+id/instructions"
+            style="@style/title_text"
+            android:layout_alignBottom="@id/blob_ImageView"
+            android:layout_marginTop="20dp"
+            android:text="@string/instructions_title"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/myWhite" />
+
+        <TextView
+            android:id="@+id/round_count_lbl"
+            style="@style/title_text"
+            android:layout_alignRight="@id/blob_ImageView"
+            android:layout_alignBottom="@id/blob_ImageView"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="40dp"
+            android:text="@string/round_count_lbl"
+            android:textAlignment="viewStart"
+            android:textColor="@color/myWhite" />
+
+        <TextView
+            android:id="@+id/score_lbl"
+            style="@style/title_text"
+            android:layout_alignStart="@id/blob_ImageView"
+            android:layout_alignBottom="@id/blob_ImageView"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/score_lbl"
+            android:textAlignment="viewStart"
+            android:textColor="@color/myWhite" />
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

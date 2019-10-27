@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
+    /*
     private val PERMISSION_REQUEST_CODE = 100
     private val intentFilter = IntentFilter()
     private lateinit var channel: WifiP2pManager.Channel
@@ -27,10 +28,14 @@ class MainActivity : AppCompatActivity() {
 
     private val peers = mutableListOf<WifiP2pDevice>()
 
+     */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+        setContentView(R.layout.main_menu)
+    }
+}
+/*
         val permissionList = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_WIFI_STATE,
@@ -124,3 +129,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+
+ */

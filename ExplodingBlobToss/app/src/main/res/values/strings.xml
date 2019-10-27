@@ -1,4 +1,25 @@
 <resources>
     <string name="app_name">ExplodingBlobToss</string>
     <string name="defaultPeerName">NO NAME</string>
+    <string name="game_title_text">Exploding Blob Toss</string>
+    <string name="start_game_btn">Start Game</string>
+    <string name="Lore_btn">Lore</string>
+    <string name="tutorial_btn">Tutorial</string>
+    <string name="two_players">Two Players</string>
+    <string name="three_players">Three Players</string>
+    <string name="four_players">Four Players</string>
+    <string name="num_player_title">How Many Players?</string>
+    <string name="connect_peers_title">Connect To Peers</string>
+    <string name="detected_devices_text">Detected Devices:</string>
+    <string name="continue_btn">Continue</string>
+    <string name="back_btn">Back</string>
+    <string name="lobby_title">Waiting For Other Players</string>
+    <string name="connected_players_title">Connected Players</string>
+    <string name="instructions_title">Pass the blob before it explodes!</string>
+    <string name="round_count_lbl">Round: %d </string>
+    <string name="score_lbl">Score: %d</string>
+    <string name="quit_btn">Quit</string>
+    <string name="restart_btn">Restart</string>
+    <string name="next_round_btn">Next Round</string>
+    <string name="round_result_text">You Lose</string>
 </resources>

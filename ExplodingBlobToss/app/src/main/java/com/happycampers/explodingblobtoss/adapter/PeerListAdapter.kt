@@ -4,11 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.happycampers.explodingblobtoss.R
 import com.happycampers.explodingblobtoss.model.WifiDirectPeer
 import kotlinx.android.synthetic.main.peer.view.*
-
+/*
 class PeerListAdapter (
     private val context: Context,
     private val peers: List<WifiDirectPeer>
@@ -35,3 +36,5 @@ class PeerListAdapter (
     }
 
 }
+
+ */
