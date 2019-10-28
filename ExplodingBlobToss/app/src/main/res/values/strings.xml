@@ -22,4 +22,17 @@
     <string name="restart_btn">Restart</string>
     <string name="next_round_btn">Next Round</string>
     <string name="round_result_text">You Lose</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label_me">YOUR DEVICE</string>
+    <string name="label_peers">AVAILABLE PEERS</string>
+    <string name="empty_message">[empty message]</string>
+    <string name="connect_peer_button">CONNECT</string>
+    <string name="disconnect_peer_button">DISCONNECT</string>
+    <string name="get_file_button">GET FILE</string>
+    <string name="group_owner_text">THE OWNER</string>
+    <string name="yes">YES</string>
+    <string name="client_text">[client text]</string>
+    <string name="empty"> </string>
+    <string name="enable_p2p_button">ENABLE P2P</string>
+    <string name="discover_peers_button">DISCOVER PEERS</string>
 </resources>
