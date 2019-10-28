@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.ListFragment
@@ -18,7 +19,7 @@ import java.lang.Exception
 
 class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     private var peers: MutableList<WifiP2pDevice> = ArrayList()
-    private lateinit var contentView: View
+    lateinit var contentView: View
     private lateinit var device: WifiP2pDevice
 
     companion object {
@@ -37,7 +38,8 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         try {
             super.onActivityCreated(savedInstanceState)
-            this.listAdapter = WifiPeerListAdapter(this.context!!, R.layout.row_devices, peers)
+
+            listAdapter = WifiPeerListAdapter(contentView.context, R.layout.row_devices, peers)
         }
         catch (e: Exception){
             Log.e("DEVICELISTFRAGMENT_ACT", e.message)
@@ -112,18 +114,11 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
 
         println("IN ONPEERSAVAILABLE")
 
-        /*
         peers.clear()
 
         for (item in peerList!!.deviceList) {
             peers.add(item)
             println("PEER: " + item.deviceName + " IS A " + item.primaryDeviceType)
-        }
-        */
-
-        for (i in 0..10){
-            peers.add(WifiP2pDevice())
-            println("Added test peer " + i)
         }
 
         println(peers.size)

@@ -11,7 +11,7 @@ import android.widget.Toast
 class WifiDirectBroadcastReceiver constructor(
     val manager: WifiP2pManager,
     val channel: WifiP2pManager.Channel,
-    val activity: MainActivity)
+    val activity: WifiPeerSetupActivity)
     : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
