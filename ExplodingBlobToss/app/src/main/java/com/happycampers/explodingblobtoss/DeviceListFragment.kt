@@ -45,8 +45,6 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
 
     }
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -111,12 +109,21 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     }
 
     override fun onPeersAvailable(peerList: WifiP2pDeviceList?) {
+
         println("IN ONPEERSAVAILABLE")
+
+        /*
         peers.clear()
 
         for (item in peerList!!.deviceList) {
             peers.add(item)
             println("PEER: " + item.deviceName + " IS A " + item.primaryDeviceType)
+        }
+        */
+
+        for (i in 0..10){
+            peers.add(WifiP2pDevice())
+            println("Added test peer " + i)
         }
 
         println(peers.size)
@@ -127,6 +134,8 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
             Toast.makeText(this.context, "NO PEERS", Toast.LENGTH_LONG).show()
             return
         }
+
+
     }
 
     fun clearPeers() {
