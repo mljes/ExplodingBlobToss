@@ -21,7 +21,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
-class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
+class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
     companion object {
         @JvmStatic
         private val PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION = 1001
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, Device
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_peer_setup)
 
         val permissionList = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, Device
         for (permission in permissionList) {
             //get location permission from user
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                //ActivityCompat.requestPermissions(this,  Array<String>(2){permission}, 100)
 
                 requestPermissions(Array(2){Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION)
@@ -129,10 +128,10 @@ class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, Device
                 fragment.onInitiateDiscovery()
                 manager.discoverPeers(channel, object: ActionListener {
                     override fun onSuccess() {
-                        Toast.makeText(this@MainActivity, "STARTED PEER DISCOVERY", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@WifiPeerSetupActivity, "STARTED PEER DISCOVERY", Toast.LENGTH_LONG).show()
                     }
                     override fun onFailure(reasonCode: Int) {
-                        Toast.makeText(this@MainActivity, "FAILED TO START PEER DISCOVERY", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@WifiPeerSetupActivity, "FAILED TO START PEER DISCOVERY", Toast.LENGTH_LONG).show()
                     }
                 })
             }
@@ -153,7 +152,7 @@ class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, Device
                 //ignored
             }
             override fun onFailure(reason: Int) {
-                Toast.makeText(this@MainActivity, "CONNECT FAILED", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@WifiPeerSetupActivity, "CONNECT FAILED", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -175,10 +174,10 @@ class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, Device
 
     override fun onChannelDisconnected() {
         if (manager != null && !retryChannel) {
-            Toast.makeText(this@MainActivity, "Channel lost. Trying again", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@WifiPeerSetupActivity, "Channel lost. Trying again", Toast.LENGTH_LONG).show()
             resetData()
             retryChannel = true
-            manager.initialize(this@MainActivity, mainLooper, this)
+            manager.initialize(this@WifiPeerSetupActivity, mainLooper, this)
         }
         else {
             Toast.makeText(this, "Channel likely lost permanently.\nTry disable/re-enable P2P.", Toast.LENGTH_LONG).show()
@@ -197,10 +196,10 @@ class MainActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, Device
                 || fragment.getDevice().status == WifiP2pDevice.INVITED) {
                 manager.cancelConnect(channel, object: ActionListener {
                     override fun onSuccess() {
-                        Toast.makeText(this@MainActivity, "Aborting connection", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@WifiPeerSetupActivity, "Aborting connection", Toast.LENGTH_LONG).show()
                     }
                     override fun onFailure(reasonCode: Int) {
-                        Toast.makeText(this@MainActivity, "Connect abort request failed.\nReason code: " + reasonCode, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@WifiPeerSetupActivity, "Connect abort request failed.\nReason code: " + reasonCode, Toast.LENGTH_LONG).show()
                     }
                 })
             }

@@ -43,12 +43,17 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
     ): View? {
         try {
             contentView = inflater.inflate(R.layout.device_detail, null)
+
             contentView.findViewById<Button>(R.id.btn_connect).setOnClickListener { view: View? ->
                 val config = WifiP2pConfig()
                 config.deviceAddress = device.deviceAddress
                 config.wps.setup = WpsInfo.PBC
 
                 (activity as DeviceListFragment.DeviceActionListener).connect(config)
+            }
+
+            contentView.findViewById<Button>(R.id.btn_disconnect).setOnClickListener {
+                (activity as DeviceListFragment.DeviceActionListener).disconnect()
             }
 
             contentView.findViewById<Button>(R.id.btn_start_client).setOnClickListener {

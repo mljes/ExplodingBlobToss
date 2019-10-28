@@ -14,7 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:gravity="center_vertical"
-        android:background="@android:color/holo_blue_light" />
+        android:background="@color/colorAccent" />
     <!-- Self information -->
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -57,7 +57,8 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:gravity="center_vertical"
-        android:background="@android:color/holo_blue_light" />
+        android:background="@color/colorAccent" />
+
     <!-- Available peers -->
     <ListView
         android:id="@android:id/list"
