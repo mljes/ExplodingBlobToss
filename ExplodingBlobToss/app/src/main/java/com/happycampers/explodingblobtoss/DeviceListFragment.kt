@@ -38,8 +38,7 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         try {
             super.onActivityCreated(savedInstanceState)
-
-            listAdapter = WifiPeerListAdapter(contentView.context, R.layout.row_devices, peers)
+            listAdapter = WifiPeerListAdapter(this.context!!, R.layout.row_devices, peers)
         }
         catch (e: Exception){
             Log.e("DEVICELISTFRAGMENT_ACT", e.message)
@@ -74,7 +73,7 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             println("******************IN GETVIEW***********************")
-            var view: View = convertView!!
+            var view: View? = convertView
 
             if (view == null) {
                 val viewInflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -82,7 +81,11 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
                 view = viewInflater.inflate(R.layout.row_devices, null)
             }
 
-            val device: WifiP2pDevice = objects[position]
+            var device: WifiP2pDevice? = null
+
+            if (position < objects.size) {
+                device = objects[position]
+            }
 
             if (device != null) {
                 val top: TextView = view!!.findViewById(R.id.device_name)
@@ -96,7 +99,7 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
                 }
             }
 
-            return view
+            return view!!
         }
     }
 
@@ -111,19 +114,27 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     }
 
     override fun onPeersAvailable(peerList: WifiP2pDeviceList?) {
-
+        val wifiPeerListAdapter = (listAdapter as WifiPeerListAdapter)
         println("IN ONPEERSAVAILABLE")
 
         peers.clear()
+        wifiPeerListAdapter.clear()
 
         for (item in peerList!!.deviceList) {
-            peers.add(item)
+            val deviceType: String = item.primaryDeviceType
+
+            if (deviceType.subSequence(0, deviceType.indexOf("-")).equals("10")){
+                println("FOUND A PHONE!!!!!")
+                peers.add(item)
+                wifiPeerListAdapter.add(item)
+            }
+
             println("PEER: " + item.deviceName + " IS A " + item.primaryDeviceType)
         }
 
         println(peers.size)
 
-        (listAdapter as WifiPeerListAdapter).notifyDataSetChanged()
+        wifiPeerListAdapter.notifyDataSetChanged()
 
         if (peers.size== 0) {
             Toast.makeText(this.context, "NO PEERS", Toast.LENGTH_LONG).show()
@@ -131,6 +142,11 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
         }
 
 
+    }
+
+    override fun onListItemClick(l: ListView?, v: View?, position: Int, id: Long) {
+        val device: WifiP2pDevice = listAdapter.getItem(position) as WifiP2pDevice
+        (this.context!! as DeviceActionListener).showDetails(device)
     }
 
     fun clearPeers() {

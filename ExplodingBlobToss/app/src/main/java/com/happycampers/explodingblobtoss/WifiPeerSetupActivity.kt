@@ -18,6 +18,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
@@ -57,6 +58,8 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
         manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         channel = manager.initialize(this, mainLooper, null)
+
+        findViewById<FrameLayout>(R.id.frag_detail).visibility = View.GONE
 
     }
 

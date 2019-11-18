@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         val startButton = findViewById<Button>(R.id.start_btn)
         startButton.setOnClickListener {
             val intent = Intent(this, WifiPeerSetupActivity::class.java).apply {
-                //stuff?
+                //?
             }
             startActivity(intent)
         }

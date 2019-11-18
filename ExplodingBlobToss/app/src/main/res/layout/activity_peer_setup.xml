@@ -13,10 +13,11 @@
             android:id="@+id/frag_list"
             class="com.happycampers.explodingblobtoss.DeviceListFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="300dp">
             <!-- Preview: layout=@layout/row_devices -->
         </fragment>
         <fragment
+            android:visibility="gone"
             android:id="@+id/frag_detail"
             class="com.happycampers.explodingblobtoss.DeviceDetailFragment"
             android:layout_width="match_parent"

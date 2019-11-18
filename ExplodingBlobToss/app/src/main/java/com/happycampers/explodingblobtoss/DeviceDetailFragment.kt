@@ -3,7 +3,6 @@ package com.happycampers.explodingblobtoss
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.*
 import android.os.AsyncTask
 import android.os.Bundle
@@ -13,11 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.content.FileProvider
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import java.io.*
 import java.lang.Exception
-import java.net.ServerSocket
+import java.lang.ref.WeakReference
+import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.net.Socket
 
 class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
@@ -47,7 +48,6 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
             contentView.findViewById<Button>(R.id.btn_connect).setOnClickListener { view: View? ->
                 val config = WifiP2pConfig()
                 config.deviceAddress = device.deviceAddress
-                config.wps.setup = WpsInfo.PBC
 
                 (activity as DeviceListFragment.DeviceActionListener).connect(config)
             }
@@ -57,9 +57,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
             }
 
             contentView.findViewById<Button>(R.id.btn_start_client).setOnClickListener {
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.type = "image/*"
-                startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE)
+                var clientSocket = ClientMessageTransferTask().execute(info!!.groupOwnerAddress).get()
             }
         }
         catch (e: Exception) {
@@ -68,21 +66,6 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
 
 
         return contentView
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        var uri: Uri? = data?.data
-
-        val statusText = contentView.findViewById(R.id.status_text) as TextView
-        statusText.text = "Sending" + uri
-
-        val serviceIntent: Intent = Intent(activity, FileTransferService::class.java)
-        serviceIntent.action = FileTransferService.ACTION_SEND_FILE
-        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString())
-        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS, info?.groupOwnerAddress?.hostAddress)
-        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988)
-
-        activity?.startService(serviceIntent)
     }
 
     override fun onConnectionInfoAvailable(info: WifiP2pInfo?) {
@@ -105,14 +88,17 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
         deviceInfoView.text = "Group Owner IP: " + info.groupOwnerAddress?.hostAddress
 
         if (info.groupFormed && info.isGroupOwner) {
-            FileServerAsyncTask(activity!!, contentView.findViewById<TextView>(R.id.status_text)).execute()
+            //starts receiving messages
+            MessageServerAsyncTask().execute()
+            return
         }
         else if (info.groupFormed) {
             contentView.findViewById<Button>(R.id.btn_start_client).visibility = View.VISIBLE
-            contentView.findViewById<TextView>(R.id.status_text).text = resources.getString(R.string.client_text)
-        }
 
-        contentView.findViewById<Button>(R.id.btn_connect).visibility = View.GONE
+            Toast.makeText(activity, "GROUP FORMED - " + info.groupOwnerAddress, Toast.LENGTH_LONG).show()
+            //contentView.findViewById<TextView>(R.id.status_text).text = resources.getString(R.string.client_text)
+            return
+        }
     }
 
     fun showDetails(device: WifiP2pDevice) {
@@ -134,22 +120,20 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
         contentView.findViewById<TextView>(R.id.device_address).text = ""
         contentView.findViewById<TextView>(R.id.device_info).text = ""
         contentView.findViewById<TextView>(R.id.group_owner).text = ""
-        contentView.findViewById<TextView>(R.id.status_text).text = ""
+        //contentView.findViewById<TextView>(R.id.status_text).text = ""
 
         contentView.findViewById<Button>(R.id.btn_start_client).visibility = View.GONE
         this.getView()?.visibility = View.GONE
     }
 
-
-
     companion object {
-        fun copyFile(inputStream: InputStream, out: OutputStream): Boolean {
+        fun copyMessage(inputStream: InputStream, out: OutputStream): Boolean {
             var buf = ByteArray(1024)
 
             var len: Int = inputStream.read(buf)
 
             try {
-                while (len != -1) {
+                while (len != -1) { //reached end of buffer
                     out.write(buf, 0, len)
 
                     len = inputStream.read(buf)
@@ -166,64 +150,5 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
             return true
         }
     }
-
-    class FileServerAsyncTask(val context: Context, val statusText: View):
-        AsyncTask<Void, Void, String>() {
-
-        override fun doInBackground(vararg p0: Void?): String? {
-            try {
-                val serverSocket = ServerSocket(8988)
-                Log.d(".....", "SOCKET OPENED")
-
-                val client: Socket = serverSocket.accept()
-                Log.d(".....", "SERVER CONNECTION DONE")
-
-                val f = File(context.getExternalFilesDir("received"), "wifip2pshared-" + System.currentTimeMillis() + ".jpg")
-
-                val dirs = File(f.parent!!)
-
-                if (!dirs.exists()) dirs.mkdirs()
-
-                f.createNewFile()
-
-                val inputStream: InputStream = client.getInputStream()
-                copyFile(inputStream, FileOutputStream(f))
-
-                serverSocket.close()
-
-                return f.absolutePath
-            }
-            catch (e: IOException) {
-                Log.e(".....", e.message)
-                return null
-            }
-        }
-
-        override fun onPostExecute(result: String?) {
-            if (result != null) {
-                (statusText as TextView).text = "File copied - " + result
-
-                val recvFile = File(result)
-
-                val fileUri = FileProvider.getUriForFile(
-                    context,
-                    "com.happycampers.explodingblobtoss.fileprovider",
-                    recvFile)
-
-                val intent = Intent()
-
-                intent.action = Intent.ACTION_VIEW
-                intent.setDataAndType(fileUri, "image/*")
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-
-                context.startActivity(intent)
-            }
-        }
-
-        override fun onPreExecute() {
-            (statusText as TextView).text = "Opening a server socket"
-        }
-    }
-
 
 }
