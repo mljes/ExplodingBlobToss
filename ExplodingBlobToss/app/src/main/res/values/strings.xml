@@ -22,4 +22,9 @@
     <string name="restart_btn">Restart</string>
     <string name="next_round_btn">Next Round</string>
     <string name="round_result_text">You Lose</string>
+    <string name="Lore_title">Lore</string>
+    <string name="Lore_text">This is the Lore text</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

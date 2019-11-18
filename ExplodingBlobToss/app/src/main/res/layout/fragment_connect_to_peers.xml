@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_black_white_bg">
 
-    <Button
-        android:id="@+id/back_btn"
-        style="@style/button_style"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/rounded_button_corners"
-        android:text="@string/back_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/continue_btn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <RelativeLayout
         android:id="@+id/relativelayout"
         android:layout_width="0dp"
@@ -63,7 +49,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/detected_devices_text"
         android:textAppearance="@style/button_text"
         android:textColor="#141414"
@@ -76,7 +61,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -88,7 +73,7 @@
         android:layout_width="0dp"
         android:layout_height="3dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/colorAccent"
@@ -104,12 +89,12 @@
         style="@style/button_style"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/accent_button"
         android:text="@string/continue_btn"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

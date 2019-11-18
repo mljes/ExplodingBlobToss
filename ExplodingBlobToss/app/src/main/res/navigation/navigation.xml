@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/main_menu">
+
+    <fragment
+        android:id="@+id/main_menu"
+        android:name="com.happycampers.explodingblobtoss.MainMenu"
+        android:label="main_menu" >
+        <action
+            android:id="@+id/action_main_menu_to_lore"
+            app:destination="@id/lore"
+            app:enterAnim="@anim/enter_right_to_left"
+            app:exitAnim="@anim/exit_right_to_left"
+            app:launchSingleTop="false"
+            app:popEnterAnim="@anim/enter_left_to_right"
+            app:popExitAnim="@anim/exit_left_to_right"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_main_menu_to_tutorial"
+            app:destination="@id/tutorial"
+            app:enterAnim="@anim/enter_right_to_left"
+            app:exitAnim="@anim/exit_right_to_left"
+            app:popEnterAnim="@anim/enter_left_to_right"
+            app:popExitAnim="@anim/exit_left_to_right" />
+        <action
+            android:id="@+id/action_main_menu_to_connect_to_peers"
+            app:destination="@id/connect_to_peers"
+            app:enterAnim="@anim/enter_right_to_left"
+            app:exitAnim="@anim/exit_right_to_left"
+            app:popEnterAnim="@anim/enter_left_to_right"
+            app:popExitAnim="@anim/exit_left_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/lore"
+        android:name="com.happycampers.explodingblobtoss.Lore"
+        android:label="lore" />
+    <fragment
+        android:id="@+id/tutorial"
+        android:name="com.happycampers.explodingblobtoss.tutorial"
+        android:label="fragment_tutorial"
+        tools:layout="@layout/fragment_tutorial" />
+    <fragment
+        android:id="@+id/connect_to_peers"
+        android:name="com.happycampers.explodingblobtoss.ConnectToPeers"
+        android:label="connect_to_peers" />
+</navigation>
