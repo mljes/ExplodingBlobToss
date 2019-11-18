@@ -29,15 +29,11 @@ class WifiDirectBroadcastReceiver constructor(
                 }
             }
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
-                println("------PEERS CHANGED")
-
                 if (manager != null) {
                     manager.requestPeers(channel, activity.supportFragmentManager.findFragmentById(com.happycampers.explodingblobtoss.R.id.frag_list) as WifiP2pManager.PeerListListener)
                 }
             }
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-                println("------CONNECTION CHANGED")
-
                 if (manager == null) {
                     return
                 }
@@ -45,14 +41,9 @@ class WifiDirectBroadcastReceiver constructor(
                 val fragment = activity.supportFragmentManager.findFragmentById(com.happycampers.explodingblobtoss.R.id.frag_detail) as DeviceDetailFragment
                 manager.requestConnectionInfo(channel, fragment)
 
-                //need to do something with the non-deprecated version of NetworkInfo...
-
-                // connection state has changed
                 Toast.makeText(activity, "CONNECTION STATE HAS CHANGED", Toast.LENGTH_LONG).show()
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
-                println("------THIS DEVICE CHANGED")
-
                 var fragment: DeviceListFragment = activity.supportFragmentManager.findFragmentById(com.happycampers.explodingblobtoss.R.id.frag_list) as DeviceListFragment
 
                 fragment.updateThisDevice(intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE) as WifiP2pDevice)

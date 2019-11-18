@@ -7,10 +7,22 @@ class SocketSetupAsyncTask:
     AsyncTask<Int, Void, ServerClientSocketPair>() {
 
     override fun doInBackground(vararg p0: Int?): ServerClientSocketPair? {
-        val serverSocket = ServerSocket(8997)
-        val clientSocket = serverSocket.accept()
+        try {
+            val serverSocket = ServerSocket(8997)
 
-        return ServerClientSocketPair(serverSocket, clientSocket)
+            println("GOT PAST SERVERSOCKET")
+
+            //val clientSocket = serverSocket.accept()
+
+            println("Set up the sockets, should be ready to return...?")
+
+            return ServerClientSocketPair(serverSocket, null)
+        }
+        catch (e: Exception) {
+            println("failure in SocketSetup: " + e.message)
+            return null
+        }
+
     }
 
 
