@@ -87,7 +87,7 @@ class P2PClient {
                     }
 
                     if (socket != null && !socket!!.isConnected) {
-                        socket?.connect(InetSocketAddress(serverAddress, 8995))
+                        socket?.connect(InetSocketAddress(serverAddress, 8993))
                         println("connected client socket for receive")
                     }
 

@@ -82,9 +82,12 @@ class P2PServer {
 
             private fun openServerSocket(socketAddress: InetAddress): Boolean {
                 try {
+                    println("before setting server socket")
                     if (transferServerSocket == null) {
-                        transferServerSocket = ServerSocket(8995)
+                        transferServerSocket = ServerSocket(8993)
                     }
+
+                    println("IN OPENSERVERSOCKET")
 
                     transferClientSocket = transferServerSocket?.accept()
 
@@ -112,7 +115,7 @@ class P2PServer {
 
                 try {
                     if (transferServerSocket == null) {
-                        transferServerSocket = ServerSocket(8995, 0, socketAddress)
+                        transferServerSocket = ServerSocket(8993, 0, socketAddress)
                     }
 
                     transferClientSocket = transferServerSocket?.accept()
