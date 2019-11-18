@@ -27,6 +27,8 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
     private lateinit var device: WifiP2pDevice
     private var info: WifiP2pInfo? = null
 
+    private lateinit var socketPair: ServerClientSocketPair
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         try {
             super.onActivityCreated(savedInstanceState)
@@ -57,7 +59,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
             }
 
             contentView.findViewById<Button>(R.id.btn_start_client).setOnClickListener {
-                var clientSocket = ClientMessageTransferTask().execute(info!!.groupOwnerAddress).get()
+                ClientMessageTransferTask().execute(info!!.groupOwnerAddress).get()
             }
         }
         catch (e: Exception) {
@@ -88,6 +90,8 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
         deviceInfoView.text = "Group Owner IP: " + info.groupOwnerAddress?.hostAddress
 
         if (info.groupFormed && info.isGroupOwner) {
+            println("This is where we are")
+            socketPair = SocketSetupAsyncTask().execute(8997).get()
             //starts receiving messages
             MessageServerAsyncTask().execute()
             return
