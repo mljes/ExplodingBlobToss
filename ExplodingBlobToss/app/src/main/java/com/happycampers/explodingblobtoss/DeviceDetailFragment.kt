@@ -32,6 +32,8 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
 
     private lateinit var socketPair: ServerClientSocketPair
 
+    private var task: P2PServer.Companion.StartServerForTransferTask? = null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         try {
             super.onActivityCreated(savedInstanceState)
@@ -92,12 +94,14 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
             println("just before messageserverasynctask")
             P2PServer.Companion.MessageServerAsyncTask().execute()
             println("just before startserverfortransfertask")
-            P2PServer.Companion.StartServerForTransferTask().execute(info!!.groupOwnerAddress)
+            task = P2PServer.Companion.StartServerForTransferTask(info!!.groupOwnerAddress)
+
+            task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)//execute(info!!.groupOwnerAddress)
 
             val button = contentView.findViewById<Button>(R.id.btn_start_client)
 
             button.setOnClickListener {
-                P2PServer.Companion.ServerMessageTransferTask().execute(info!!.groupOwnerAddress)
+                P2PServer.Companion.ServerMessageTransferTask(info!!.groupOwnerAddress).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             }
 
             button.visibility = View.VISIBLE
@@ -114,7 +118,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
 
             button.setOnClickListener {
                 println("Set click listener for CLIENT")
-                P2PClient.Companion.ClientMessageTransferTask().execute(info.groupOwnerAddress)
+                P2PClient.Companion.ClientMessageTransferTask(info.groupOwnerAddress).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             }
 
             button.visibility = View.VISIBLE

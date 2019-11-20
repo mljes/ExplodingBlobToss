@@ -9,11 +9,11 @@ import java.net.*
 
 class P2PClient {
     companion object {
-        class ClientMessageTransferTask : AsyncTask<InetAddress, Void?, Void>() {
+        class ClientMessageTransferTask(val address: InetAddress) : AsyncTask<InetAddress, Void?, Void>() {
             private var socket: Socket? = null
 
             override fun doInBackground(vararg p0: InetAddress?): Void? {
-                sendData(p0[0]!!)
+                sendData(address)
                 return null
             }
 

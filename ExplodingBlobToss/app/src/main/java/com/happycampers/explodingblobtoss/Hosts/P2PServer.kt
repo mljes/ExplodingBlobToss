@@ -71,13 +71,24 @@ class P2PServer {
         private var transferServerSocket: ServerSocket? = null
         private var transferClientSocket: Socket? = null
 
-        class StartServerForTransferTask: AsyncTask<InetAddress, Void, Void>() {
+        class StartServerForTransferTask(val address: InetAddress): AsyncTask<InetAddress, Void, Void>() {
             override fun doInBackground(vararg p0: InetAddress?): Void? {
-                var keepSocketAlive = openServerSocket(p0[0]!!)
-                while (keepSocketAlive) {
-                    keepSocketAlive = openServerSocket(p0[0]!!)
+                try {
+                    Log.d("TRANSFERSERVER", "start server is here *****")
+                    //var keepSocketAlive = openServerSocket(address)
+                    //while (keepSocketAlive) {
+                        openServerSocket(address)
+                    //}
                 }
+                catch (e: Exception) {
+                    Log.d("TRANSFERSERVER", "$$$$$$$ CRAHSED " + e.toString())
+                }
+
                 return null
+            }
+
+            override fun onPreExecute() {
+                Log.d("TRANSFERSERVER", "In PREEXECUTE FOR TRANSEFER SERV")
             }
 
             private fun openServerSocket(socketAddress: InetAddress): Boolean {
@@ -103,10 +114,10 @@ class P2PServer {
 
         }
 
-        class ServerMessageTransferTask: AsyncTask<InetAddress, Void?, Void>() {
+        class ServerMessageTransferTask(val address: InetAddress): AsyncTask<InetAddress, Void?, Void>() {
 
             override fun doInBackground(vararg p0: InetAddress?): Void? {
-                sendData(p0[0]!!)
+                sendData(address)
                 return null
             }
 
@@ -118,7 +129,7 @@ class P2PServer {
                         transferServerSocket = ServerSocket(8993, 0, socketAddress)
                     }
 
-                    transferClientSocket = transferServerSocket?.accept()
+                    //transferClientSocket = transferServerSocket?.accept()
 
                     println("got past socket.connect")
 
@@ -137,10 +148,10 @@ class P2PServer {
                     outputStream.flush()
                     byteArrayOutputStream.flush()
 
-                    byteArrayOutputStream.close()
-                    outputStream.close()
-                    transferClientSocket!!.close()
-                    transferServerSocket!!.close()
+                    //byteArrayOutputStream.close()
+                    //outputStream.close()
+                    //transferClientSocket!!.close()
+                    //transferServerSocket!!.close()
                 } catch (e: java.lang.Exception) {
                     Log.d("CLIENTTRANSFERSERVICE", e.toString())
                 }
