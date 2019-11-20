@@ -16,6 +16,12 @@
         <item name="android:activityCloseExitAnimation">@anim/exit_left_to_right</item>
 
     </style>
+    <style name="AppTheme_PeerSetup" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
     <style name="title_text">
         <item name="android:layout_width">match_parent</item>
