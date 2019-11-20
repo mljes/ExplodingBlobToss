@@ -10,6 +10,7 @@ import java.net.*
 class P2PClient {
     companion object {
         class ClientMessageTransferTask(val address: InetAddress) : AsyncTask<InetAddress, Void?, Void>() {
+            private val TAG = "P2PClient.TRANSFER"
             private var socket: Socket? = null
 
             override fun doInBackground(vararg p0: InetAddress?): Void? {
@@ -18,7 +19,6 @@ class P2PClient {
             }
 
             private fun sendData(serverAddress: InetAddress) {
-                println("just inside sendData")
                 if (socket == null) {
                     socket = Socket()
                 }
@@ -26,30 +26,21 @@ class P2PClient {
                 var message = ""
 
                 try {
-                    println("inside try for sendData (client)")
                     if (socket != null && !socket!!.isBound) {
                         socket?.bind(null)
-                        println("bound client socket for transfer")
                     }
 
                     if (socket != null && !socket!!.isConnected) {
                         socket?.connect(InetSocketAddress(serverAddress, 8997))
-                        println("connected client socket for transfer")
                     }
-
-                    println("got past socket.connect (client)")
 
                     var outputStream: OutputStream = socket!!.getOutputStream()
                     var byteArrayOutputStream = ByteArrayOutputStream(32)
-
-                    println("got past outputstream creation")
 
                     message = "THIS IS MY MESSAGE"
 
                     byteArrayOutputStream.write(message.toByteArray())
                     byteArrayOutputStream.writeTo(outputStream)
-
-                    println("wrote to the outputstream")
 
                     outputStream.flush()
                     byteArrayOutputStream.flush()
@@ -58,12 +49,13 @@ class P2PClient {
                     outputStream.close()
                     socket!!.close()
                 } catch (e: Exception) {
-                    Log.d("CLIENTTRANSFER", e.toString())
+                    Log.d(TAG, e.toString())
                 }
             }
         }
 
         class ClientMessageReceiveTask : AsyncTask<InetAddress, Void?, Void>() {
+            private val TAG = "P2PClient.RECEIVE"
             private var socket: Socket? = null
             private var receiverRetryCount = 0
 
@@ -83,19 +75,15 @@ class P2PClient {
                 try {
                     if (socket != null && !socket!!.isBound) {
                         socket?.bind(null)
-                        println("bound client socket for receive")
                     }
 
                     if (socket != null && !socket!!.isConnected) {
                         socket?.connect(InetSocketAddress(serverAddress, 8993))
-                        println("connected client socket for receive")
                     }
 
                     if (socket!!.isConnected) {
                         val inputStream = socket?.getInputStream()
                         val outputStream = ByteArrayOutputStream(32)
-
-                        println("set up streams for receive")
 
                         var buf = ByteArray(32)
                         var len: Int = inputStream!!.read(buf)
@@ -108,9 +96,6 @@ class P2PClient {
 
                         println(buf.toString())
 
-                        println("PAST COPYMESSAGE IN RECEIVE")
-                        //serverSocket.close()
-
                         val messageString = outputStream.toString()
 
 
@@ -119,9 +104,6 @@ class P2PClient {
                         )
 
                         outputStream.flush()
-
-                        //inputStream.close()
-                        //outputStream.close()
                     }
                     return true
 
@@ -136,7 +118,7 @@ class P2PClient {
                     }
                 }
                 catch (e: Exception) {
-                    Log.d("CLIENTRECEIVER", e.toString())
+                    Log.d(TAG, e.toString())
                     return false
                 }
             }

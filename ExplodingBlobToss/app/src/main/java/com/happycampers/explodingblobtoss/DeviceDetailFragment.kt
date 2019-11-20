@@ -94,7 +94,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
             println("just before messageserverasynctask")
             P2PServer.Companion.MessageServerAsyncTask().execute()
             println("just before startserverfortransfertask")
-            task = P2PServer.Companion.StartServerForTransferTask(info!!.groupOwnerAddress)
+            task = P2PServer.Companion.StartServerForTransferTask()
 
             task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)//execute(info!!.groupOwnerAddress)
 

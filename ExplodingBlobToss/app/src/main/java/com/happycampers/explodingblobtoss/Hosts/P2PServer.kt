@@ -12,6 +12,8 @@ class P2PServer {
             private var serverSocket: ServerSocket? = null
             private var clientSocket: Socket? = null
 
+            private val TAG = "P2PServer.RECEIVE"
+
             override fun doInBackground(vararg p0: Void?): String? {
                 var receiving = receiveData()
                 while (receiving) {
@@ -30,23 +32,17 @@ class P2PServer {
 
                     if (isCancelled) return false
 
-                    println("SERVER IS ON PORT " + serverSocket)
+                    Log.d(TAG, "SERVER IS ON PORT " + serverSocket?.localPort)
 
                     val inputStream = clientSocket?.getInputStream()
                     val outputStream = ByteArrayOutputStream(32)
 
-                    println("STREAMS CREATED")
-
-                    println("In copy message")
                     var buf = ByteArray(32)
 
                     var len: Int = inputStream!!.read(buf)
                     outputStream.write(buf, 0, len)
 
                     println(buf.toString())
-
-                    println("PAST COPYMESSAGE")
-                    //serverSocket.close()
 
                     val messageString = outputStream.toString()
 
@@ -62,7 +58,7 @@ class P2PServer {
 
                     return true
                 } catch (e: Exception) {
-                    Log.d("MESSAGESERVERASYNCTASK", e.message)
+                    Log.d(TAG, e.message)
                     return false
                 }
             }
@@ -70,44 +66,33 @@ class P2PServer {
 
         private var transferServerSocket: ServerSocket? = null
         private var transferClientSocket: Socket? = null
+        val TAG_TRANSFER = "P2PServer.TRANSFER"
 
-        class StartServerForTransferTask(val address: InetAddress): AsyncTask<InetAddress, Void, Void>() {
+        class StartServerForTransferTask: AsyncTask<InetAddress, Void, Void>() {
+
             override fun doInBackground(vararg p0: InetAddress?): Void? {
                 try {
-                    Log.d("TRANSFERSERVER", "start server is here *****")
-                    //var keepSocketAlive = openServerSocket(address)
-                    //while (keepSocketAlive) {
-                        openServerSocket(address)
-                    //}
+                    openServerSocket()
                 }
                 catch (e: Exception) {
-                    Log.d("TRANSFERSERVER", "$$$$$$$ CRAHSED " + e.toString())
+                    Log.d(TAG_TRANSFER, "Couldn't open server socket: " + e.toString())
                 }
 
                 return null
             }
 
-            override fun onPreExecute() {
-                Log.d("TRANSFERSERVER", "In PREEXECUTE FOR TRANSEFER SERV")
-            }
-
-            private fun openServerSocket(socketAddress: InetAddress): Boolean {
+            private fun openServerSocket(): Boolean {
                 try {
-                    println("before setting server socket")
                     if (transferServerSocket == null) {
                         transferServerSocket = ServerSocket(8993)
                     }
 
-                    println("IN OPENSERVERSOCKET")
-
                     transferClientSocket = transferServerSocket?.accept()
-
-                    println("STREAMS CREATED")
 
                     return true
                 }
                 catch (e: Exception) {
-                    println("Could not start server socket for transferring from server: " + e.message)
+                    Log.d(TAG_TRANSFER, "Could not start server socket for transferring from server: " + e.message)
                     return false
                 }
             }
@@ -129,29 +114,19 @@ class P2PServer {
                         transferServerSocket = ServerSocket(8993, 0, socketAddress)
                     }
 
-                    //transferClientSocket = transferServerSocket?.accept()
-
-                    println("got past socket.connect")
+                    Log.d(TAG_TRANSFER, "Receiving ")
 
                     val outputStream: OutputStream = transferClientSocket!!.getOutputStream()
                     val byteArrayOutputStream = ByteArrayOutputStream(32)
-
-                    println("got past outputstream creation")
 
                     message = "THIS IS THE SERVER'S MESSAGE"
 
                     byteArrayOutputStream.write(message.toByteArray())
                     byteArrayOutputStream.writeTo(outputStream)
 
-                    println("wrote to the outputstream")
-
                     outputStream.flush()
                     byteArrayOutputStream.flush()
 
-                    //byteArrayOutputStream.close()
-                    //outputStream.close()
-                    //transferClientSocket!!.close()
-                    //transferServerSocket!!.close()
                 } catch (e: java.lang.Exception) {
                     Log.d("CLIENTTRANSFERSERVICE", e.toString())
                 }
