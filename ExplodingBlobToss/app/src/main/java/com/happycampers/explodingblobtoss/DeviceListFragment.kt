@@ -141,7 +141,9 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
 
     override fun onListItemClick(l: ListView?, v: View?, position: Int, id: Long) {
         val device: WifiP2pDevice = listAdapter.getItem(position) as WifiP2pDevice
-        (this.context!! as DeviceActionListener).showDetails(device)
+
+        //todo
+        WifiPeerSetupActivity.deviceToPair = device
     }
 
     fun clearPeers() {
@@ -153,7 +155,7 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     }
 
     interface DeviceActionListener {
-        fun showDetails(device: WifiP2pDevice)
+        //fun showDetails(device: WifiP2pDevice)
         fun cancelDisconnect()
         fun connect(config: WifiP2pConfig)
         fun disconnect()

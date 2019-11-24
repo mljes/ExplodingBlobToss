@@ -38,8 +38,8 @@ class WifiDirectBroadcastReceiver constructor(
                     return
                 }
 
-                val fragment = activity.supportFragmentManager.findFragmentById(com.happycampers.explodingblobtoss.R.id.frag_detail) as DeviceDetailFragment
-                manager.requestConnectionInfo(channel, fragment)
+                //val fragment = activity.supportFragmentManager.findFragmentById(com.happycampers.explodingblobtoss.R.id.frag_detail) as DeviceDetailFragment
+                //manager.requestConnectionInfo(channel, fragment)
 
                 Toast.makeText(activity, "CONNECTION STATE HAS CHANGED", Toast.LENGTH_LONG).show()
             }

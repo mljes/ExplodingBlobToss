@@ -25,7 +25,6 @@ import java.net.Socket
 import java.util.concurrent.TimeUnit
 
 class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
-    protected val CHOOSE_FILE_RESULT_CODE: Int = 20
     private lateinit var contentView: View
     private lateinit var device: WifiP2pDevice
     private var info: WifiP2pInfo? = null
@@ -52,6 +51,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
         try {
             contentView = inflater.inflate(R.layout.device_detail, null)
 
+            //TODO: UI - use for connect button
             contentView.findViewById<Button>(R.id.btn_connect).setOnClickListener { view: View? ->
                 val config = WifiP2pConfig()
                 config.deviceAddress = device.deviceAddress
@@ -59,6 +59,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
                 (activity as DeviceListFragment.DeviceActionListener).connect(config)
             }
 
+            //TODO: use this when it switches on connect
             contentView.findViewById<Button>(R.id.btn_disconnect).setOnClickListener {
                 (activity as DeviceListFragment.DeviceActionListener).disconnect()
             }
@@ -70,6 +71,7 @@ class DeviceDetailFragment: Fragment(), WifiP2pManager.ConnectionInfoListener {
 
         return contentView
     }
+
 
     override fun onConnectionInfoAvailable(info: WifiP2pInfo?) {
         this.info = info

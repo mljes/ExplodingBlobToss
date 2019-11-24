@@ -1,28 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_black_white_bg">
+
+    <RelativeLayout
+        android:id="@+id/relativelayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:showIn="@layout/main_menu">
+
+
+        <ImageView
+            android:id="@+id/Splat_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_bluesplat" />
+
+        <TextView
+            android:id="@+id/connect_peers_title"
+            style="@style/title_text"
+            android:layout_alignLeft="@id/Splat_ImageView"
+            android:layout_alignTop="@id/Splat_ImageView"
+            android:layout_alignRight="@id/Splat_ImageView"
+            android:layout_alignBottom="@id/Splat_ImageView"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="25dp"
+            android:shadowColor="#FA000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="0"
+            android:text="@string/connect_peers_title"
+            android:textColor="@color/myWhite" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/detected_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/detected_devices_text"
+        android:textAppearance="@style/button_text"
+        android:textColor="#141414"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativelayout" />
+
+    <fragment
+        android:id="@+id/frag_list"
+        class="com.happycampers.explodingblobtoss.DeviceListFragment"
         android:layout_width="match_parent"
-        android:id="@+id/linearLayout1"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <fragment
-            android:id="@+id/frag_list"
-            class="com.happycampers.explodingblobtoss.DeviceListFragment"
-            android:layout_width="match_parent"
-            android:layout_height="300dp">
-            <!-- Preview: layout=@layout/row_devices -->
-        </fragment>
-        <fragment
-            android:visibility="gone"
-            android:id="@+id/frag_detail"
-            class="com.happycampers.explodingblobtoss.DeviceDetailFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <!-- Preview: layout=@layout/device_detail -->
-        </fragment>
-    </LinearLayout>
-</LinearLayout>
+        android:layout_height="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detected_title" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintBottom_toTopOf="@+id/peer_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detected_title"
+        app:layout_constraintVertical_bias="0.164" />
+
+    <Button
+        android:id="@+id/continue_btn"
+        style="@style/button_style"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/accent_button"
+        android:text="@string/continue_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_connect" />
+
+    <Button
+        android:id="@+id/btn_connect"
+        style="@style/button_style"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/accent_button"
+        android:text="CONNECT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/continue_btn" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

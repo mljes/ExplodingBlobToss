@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         actionBar?.hide()
         actionBar?.setDisplayShowHomeEnabled(true)
          actionBar?.setDisplayHomeAsUpEnabled(true)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.main_menu)
 
         val startButton = findViewById<Button>(R.id.start_btn)
         startButton.setOnClickListener {

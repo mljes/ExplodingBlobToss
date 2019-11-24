@@ -8,8 +8,10 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pManager.ActionListener
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -18,15 +20,22 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.happycampers.explodingblobtoss.Hosts.P2PClient
+import com.happycampers.explodingblobtoss.Hosts.P2PServer
 
-class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
+class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener, WifiP2pManager.ConnectionInfoListener  {
     companion object {
         @JvmStatic
         private val PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION = 1001
+
+        lateinit var deviceToPair: WifiP2pDevice
     }
+
 
     private lateinit var manager: WifiP2pManager
     private var isWifiP2pEnabled = false
@@ -36,6 +45,12 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     private lateinit var channel: WifiP2pManager.Channel
     private lateinit var receiver: BroadcastReceiver
 
+    private lateinit var device: WifiP2pDevice
+    private var info: WifiP2pInfo? = null
+
+    private lateinit var socketPair: ServerClientSocketPair
+
+    private var task: P2PServer.Companion.StartServerForTransferTask? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +74,14 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         channel = manager.initialize(this, mainLooper, null)
 
-        findViewById<FrameLayout>(R.id.frag_detail).visibility = View.GONE
+        findViewById<Button>(R.id.btn_connect).setOnClickListener { view: View? ->
+            println("STUFFFFFFFFFFFFF")
+            Toast.makeText(this, "STUFFFFFFFF", Toast.LENGTH_LONG).show()
+            val config = WifiP2pConfig()
+            config.deviceAddress = deviceToPair?.deviceAddress
 
+            this.connect(config)
+        }
     }
 
     private fun getPermissions(permissionList: Array<String>) {
@@ -93,15 +114,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     }
 
     fun resetData() {
-        val fragmentList: DeviceListFragment = supportFragmentManager.findFragmentById(R.id.frag_list) as DeviceListFragment
-        val fragmentDetails: DeviceDetailFragment = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment
-
-        if (fragmentList != null) {
-            fragmentList.clearPeers()
-        }
-        if (fragmentDetails != null) {
-            fragmentDetails.resetViews()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -110,6 +122,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         return true
     }
 
+    //enable p2p and scan for peers buttons
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.atn_direct_enable -> {
@@ -127,8 +140,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
                     return true
                 }
 
-                val fragment: DeviceListFragment = supportFragmentManager.findFragmentById(R.id.frag_list) as DeviceListFragment
-                fragment.onInitiateDiscovery()
                 manager.discoverPeers(channel, object: ActionListener {
                     override fun onSuccess() {
                         Toast.makeText(this@WifiPeerSetupActivity, "STARTED PEER DISCOVERY", Toast.LENGTH_LONG).show()
@@ -143,12 +154,13 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         return super.onOptionsItemSelected(item)
     }
 
-    override fun showDetails(device: WifiP2pDevice) {
-        val fragment: DeviceDetailFragment = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment
+    /*
+        override fun showDetails(device: WifiP2pDevice) {
+            val fragment: DeviceDetailFragment = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment
 
-        fragment.showDetails(device)
-    }
-
+            fragment.showDetails(device)
+        }
+    */
     override fun connect(config: WifiP2pConfig) {
         manager.connect(channel, config, object: ActionListener {
             override fun onSuccess() {
@@ -161,16 +173,18 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     }
 
     override fun disconnect() {
-        val fragment: DeviceDetailFragment = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment
-        fragment.resetViews()
+        //val fragment: DeviceDetailFragment = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment
+        //fragment.resetViews()
 
         manager.removeGroup(channel, object: ActionListener {
             override fun onFailure(reasonCode: Int) {
                 Log.d(".....", "DISCONNECT FAILED: " + reasonCode)
             }
 
+
             override fun onSuccess() {
-                fragment.view?.visibility = View.GONE
+                //fragment.view?.visibility = View.GONE
+                Log.d("WIfiP2PSetup", "Success on disconnect")
             }
         })
     }
@@ -191,7 +205,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         if (manager != null) {
             val fragment: DeviceListFragment = supportFragmentManager.findFragmentById(R.id.frag_list) as DeviceListFragment
 
-            if (fragment.getDevice() == null
+            if (fragment == null
                 || fragment.getDevice().status == WifiP2pDevice.CONNECTED) {
                 disconnect()
             }
@@ -230,5 +244,85 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
                 }
             }
         }
+    }
+
+    override fun onConnectionInfoAvailable(info: WifiP2pInfo?) {
+        this.info = info
+
+        // known owner IP
+        val ownerView: TextView = findViewById(R.id.group_owner)
+
+        var answer = ""
+
+        if (info!!.isGroupOwner) answer = "YES"
+        else answer = "NO"
+
+        ownerView.setText(resources.getString(R.string.group_owner_text) + answer)
+
+        //InetAddress from WifiP2pInfo
+        val deviceInfoView: TextView = findViewById(R.id.device_info)
+        deviceInfoView.text = "Group Owner IP: " + info.groupOwnerAddress?.hostAddress
+
+        if (info.groupFormed && info.isGroupOwner) {
+            println("just before messageserverasynctask")
+            P2PServer.Companion.MessageServerAsyncTask().execute()
+            println("just before startserverfortransfertask")
+            task = P2PServer.Companion.StartServerForTransferTask()
+
+            task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)//execute(info!!.groupOwnerAddress)
+
+            val button = findViewById<Button>(R.id.btn_start_client)
+
+            button.setOnClickListener {
+                P2PServer.Companion.ServerMessageTransferTask(info!!.groupOwnerAddress).executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR)
+            }
+
+            button.visibility = View.VISIBLE
+
+            return
+        }
+        else if (info.groupFormed) {
+            println("before clientmessagereceive")
+
+            P2PClient.Companion.ClientMessageReceiveTask().execute(info.groupOwnerAddress)
+            println("after clientmessagereceive")
+
+            val button = findViewById<Button>(R.id.btn_start_client)
+
+            button.setOnClickListener {
+                println("Set click listener for CLIENT")
+                P2PClient.Companion.ClientMessageTransferTask(info.groupOwnerAddress).executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR)
+            }
+
+            button.visibility = View.VISIBLE
+
+            //Toast.makeText(activity, "GROUP FORMED - " + info.groupOwnerAddress, Toast.LENGTH_LONG).show()
+            return
+        }
+    }
+
+    fun showDetails(device: WifiP2pDevice) {
+        this.device = device
+
+        val addressView = findViewById<TextView>(R.id.device_address)
+        addressView.text = device.deviceAddress
+
+        val infoView = findViewById<TextView>(R.id.device_info)
+        infoView.text = device.toString()
+    }
+
+    fun resetViews() {
+        println("IN RESETVIEWS IN DEVICEDETAILFRAGMENT")
+
+        findViewById<Button>(R.id.btn_connect).visibility = View.VISIBLE
+
+        findViewById<TextView>(R.id.device_address).text = ""
+        findViewById<TextView>(R.id.device_info).text = ""
+        findViewById<TextView>(R.id.group_owner).text = ""
+        //findViewById<TextView>(R.id.status_text).text = ""
+
+        findViewById<Button>(R.id.btn_start_client).visibility = View.GONE
     }
 }

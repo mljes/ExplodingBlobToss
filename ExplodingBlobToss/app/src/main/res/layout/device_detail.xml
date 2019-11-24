@@ -18,7 +18,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_connect"
+                android:id="@+id/btn_connectn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/connect_peer_button" />
