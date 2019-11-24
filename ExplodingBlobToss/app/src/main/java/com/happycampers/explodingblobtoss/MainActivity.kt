@@ -22,7 +22,10 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.main_menu.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,11 +33,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_menu)
-        val actionBar = supportActionBar
-        actionBar?.hide()
-        actionBar?.setDisplayShowHomeEnabled(true)
-         actionBar?.setDisplayHomeAsUpEnabled(true)
-        setContentView(R.layout.main_menu)
+        val animation: Animation = AnimationUtils.loadAnimation(this,R.anim.bounce)
+
+        //button animations
+        start_btn.startAnimation(animation)
+        tutorial_btn.startAnimation(animation)
+        lore_btn.startAnimation(animation)
 
         val startButton = findViewById<Button>(R.id.start_btn)
         startButton.setOnClickListener {

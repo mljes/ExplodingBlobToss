@@ -23,11 +23,11 @@
     <string name="next_round_btn">Next Round</string>
     <string name="round_result_text">You Lose</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="label_me">YOUR DEVICE</string>
-    <string name="label_peers">AVAILABLE PEERS</string>
-    <string name="empty_message">List not updated yet.</string>
-    <string name="connect_peer_button">CONNECT</string>
-    <string name="disconnect_peer_button">DISCONNECT</string>
+    <string name="label_me">Me</string>
+    <string name="label_peers">Available Peers</string>
+    <string name="empty_message">Refresh the list to show nearby devices</string>
+    <string name="connect_peer_button">Connect</string>
+    <string name="disconnect_peer_button">Disconnect</string>
     <string name="get_file_button">GET FILE</string>
     <string name="group_owner_text">THE OWNER</string>
     <string name="yes">YES</string>

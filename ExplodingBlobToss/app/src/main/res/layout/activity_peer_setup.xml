@@ -4,105 +4,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_black_white_bg">
+    android:background="@color/myWhite"
+    tools:layout_editor_absoluteY="81dp">
 
-    <RelativeLayout
-        android:id="@+id/relativelayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:showIn="@layout/main_menu">
+    <!-- Self information -->
 
-
-        <ImageView
-            android:id="@+id/Splat_ImageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:cropToPadding="true"
-            android:scaleType="centerInside"
-            app:srcCompat="@drawable/ic_bluesplat" />
-
-        <TextView
-            android:id="@+id/connect_peers_title"
-            style="@style/title_text"
-            android:layout_alignLeft="@id/Splat_ImageView"
-            android:layout_alignTop="@id/Splat_ImageView"
-            android:layout_alignRight="@id/Splat_ImageView"
-            android:layout_alignBottom="@id/Splat_ImageView"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="25dp"
-            android:shadowColor="#FA000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="0"
-            android:text="@string/connect_peers_title"
-            android:textColor="@color/myWhite" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/detected_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/detected_devices_text"
-        android:textAppearance="@style/button_text"
-        android:textColor="#141414"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_marginBottom="8dp"
+        android:background="@color/myWhite"
+        android:padding="3dip"
+        app:layout_constraintBottom_toTopOf="@+id/frag_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativelayout" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@color/myWhite"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/my_name"
+                style="@style/button_text"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/button_text"
+                android:textColor="@color/myBlack" />
+
+            <TextView
+                android:id="@+id/my_status"
+                style="@style/button_text"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textAppearance="@style/button_text"
+                android:textColor="@color/myBlack" />
+
+        </LinearLayout>
+    </LinearLayout>
 
     <fragment
         android:id="@+id/frag_list"
         class="com.happycampers.explodingblobtoss.DeviceListFragment"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toTopOf="@+id/continue_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detected_title" />
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="3dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintBottom_toTopOf="@+id/peer_list"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detected_title"
-        app:layout_constraintVertical_bias="0.164" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <Button
         android:id="@+id/continue_btn"
         style="@style/button_style"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/accent_button"
         android:text="@string/continue_btn"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_connect" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_connect" />
 
     <Button
         android:id="@+id/btn_connect"
         style="@style/button_style"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/accent_button"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_corners"
         android:text="CONNECT"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/continue_btn" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,11 @@
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/enter_left_to_right</item>
         <item name="android:activityOpenExitAnimation">@anim/exit_right_to_left</item>
@@ -49,6 +54,25 @@
         <item name="android:textAppearance">@style/button_text</item>
         <item name="android:textColor">@color/myWhite</item>
         <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="SubTitle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:fontFamily">@font/patrick_hand</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/myBlack</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Normal_text">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:fontFamily">@font/patrick_hand</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/myBlack</item>
     </style>
 
 </resources>
