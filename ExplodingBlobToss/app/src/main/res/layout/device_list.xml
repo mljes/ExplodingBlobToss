@@ -37,6 +37,7 @@
             android:adjustViewBounds="true"
             android:cropToPadding="true"
             android:paddingTop="16dp"
+            android:paddingEnd="5dp"
             android:paddingBottom="10dp"
             android:scaleType="fitStart"
             app:srcCompat="@drawable/ic_android" />
@@ -76,12 +77,11 @@
             android:layout_gravity="left"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="Status:"
-            android:textAppearance="@style/SubTitle"
-            tools:text="Available Peers" />
+            android:text="Available Peers:"
+            android:textAppearance="@style/SubTitle" />
 
         <ImageView
-            android:id="@+id/refresh"
+            android:id="@+id/atn_direct_discover"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="right"

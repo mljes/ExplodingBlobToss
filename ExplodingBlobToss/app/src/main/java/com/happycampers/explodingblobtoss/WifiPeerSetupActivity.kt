@@ -20,10 +20,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
@@ -75,13 +72,12 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         channel = manager.initialize(this, mainLooper, null)
 
         findViewById<Button>(R.id.btn_connect).setOnClickListener { view: View? ->
-            println("STUFFFFFFFFFFFFF")
-            Toast.makeText(this, "STUFFFFFFFF", Toast.LENGTH_LONG).show()
             val config = WifiP2pConfig()
             config.deviceAddress = deviceToPair?.deviceAddress
 
             this.connect(config)
         }
+        resetData()
     }
 
     private fun getPermissions(permissionList: Array<String>) {
@@ -114,6 +110,33 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     }
 
     fun resetData() {
+        val discoverPeersBtn = findViewById(R.id.atn_direct_discover) as ImageView
+        discoverPeersBtn.setOnClickListener {
+            if (!isWifiP2pEnabled) {
+                Toast.makeText(this, "P2P is turned off.", Toast.LENGTH_LONG).show()
+
+            }else {
+
+                manager.discoverPeers(channel, object : ActionListener {
+                    override fun onSuccess() {
+                        Toast.makeText(
+                            this@WifiPeerSetupActivity,
+                            "STARTED PEER DISCOVERY",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    override fun onFailure(reasonCode: Int) {
+                        Toast.makeText(
+                            this@WifiPeerSetupActivity,
+                            "FAILED TO START PEER DISCOVERY",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                })
+            }
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -133,21 +156,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
                     Log.e(".....", "channel or manager is null and that is BAD")
                 }
                 return true
-            }
-            R.id.atn_direct_discover -> {
-                if (!isWifiP2pEnabled) {
-                    Toast.makeText(this, "P2P is turned off.", Toast.LENGTH_LONG).show()
-                    return true
-                }
-
-                manager.discoverPeers(channel, object: ActionListener {
-                    override fun onSuccess() {
-                        Toast.makeText(this@WifiPeerSetupActivity, "STARTED PEER DISCOVERY", Toast.LENGTH_LONG).show()
-                    }
-                    override fun onFailure(reasonCode: Int) {
-                        Toast.makeText(this@WifiPeerSetupActivity, "FAILED TO START PEER DISCOVERY", Toast.LENGTH_LONG).show()
-                    }
-                })
             }
         }
 
