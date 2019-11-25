@@ -19,7 +19,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorAccentDark"
         android:gravity="center_vertical" />
     <!-- Self information -->
     <LinearLayout
@@ -97,12 +97,13 @@
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorAccentDark"
         android:gravity="center_vertical" />
 
     <!-- Available peers -->
     <ListView
         android:id="@android:id/list"
+        android:choiceMode="singleChoice"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginStart="16dp"

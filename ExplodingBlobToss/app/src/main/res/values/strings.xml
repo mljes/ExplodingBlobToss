@@ -37,4 +37,5 @@
     <string name="discover_peers_button">DISCOVER PEERS</string>
     <string name="Lore_title">Lore</string>
     <string name="Lore_text">This is the Lore text</string>
+    <string name="title_activity_tutorial">Tutorial</string>
 </resources>

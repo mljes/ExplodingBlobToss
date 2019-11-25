@@ -1,33 +1,23 @@
 package com.happycampers.explodingblobtoss
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
-class tutorial : Fragment() {
+import kotlinx.android.synthetic.main.activity_tutorial.*
+
+class Tutorial : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_tutorial)
+        //back button on actionbar
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        (activity as AppCompatActivity).supportActionBar?.show()
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tutorial, container, false)
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
-
-
-
-
-
 }

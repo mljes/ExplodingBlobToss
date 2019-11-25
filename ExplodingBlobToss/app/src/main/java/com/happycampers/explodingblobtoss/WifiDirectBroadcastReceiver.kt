@@ -24,7 +24,7 @@ class WifiDirectBroadcastReceiver constructor(
                     else -> {
                         Toast.makeText(activity, "YOU DO NOT HAVE P2P ENABLED. BYE.", Toast.LENGTH_LONG).show()
                         activity.setIsWifiP2pEnabled(false)
-                        activity.resetData()
+                        activity.discoverPeers()
                     }
                 }
             }
