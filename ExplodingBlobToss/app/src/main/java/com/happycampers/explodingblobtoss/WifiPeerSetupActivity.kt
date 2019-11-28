@@ -129,7 +129,9 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
     fun discoverPeers() {
         val discoverPeersBtn = findViewById(R.id.atn_direct_discover) as ImageView
+        val rotateAnimation: Animation = AnimationUtils.loadAnimation(this,R.anim.rotate)
         discoverPeersBtn.setOnClickListener {
+            discoverPeersBtn.startAnimation(rotateAnimation)
             discoverPeersBtn.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
