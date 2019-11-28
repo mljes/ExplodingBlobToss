@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_blacksplashbg3">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/relativelayout"
         android:layout_width="0dp"
@@ -51,8 +51,9 @@
         style="@style/button_style"
         android:layout_height="48dp"
         android:layout_marginStart="120dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="120dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="25dp"
         android:background="@drawable/accent_button"
         android:hapticFeedbackEnabled="true"
         android:text="@string/start_game_btn"
@@ -60,7 +61,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativelayout" />
+        app:layout_constraintTop_toBottomOf="@+id/relativelayout"
+        app:layout_constraintVertical_bias="0.31"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
     <Button
@@ -69,15 +72,17 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="120dp"
+        android:layout_marginTop="0dp"
         android:layout_marginEnd="120dp"
-        android:layout_marginBottom="150dp"
         android:background="@drawable/rounded_button_corners"
         android:hapticFeedbackEnabled="true"
         android:text="@string/tutorial_btn"
         android:textColor="#FAFFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_btn"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

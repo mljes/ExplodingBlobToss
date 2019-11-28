@@ -72,6 +72,7 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:fontFamily">@font/patrick_hand</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/myBlack</item>
     </style>
@@ -80,9 +81,5 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="AppTheme_PeerSetup.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme_PeerSetup.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
