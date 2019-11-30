@@ -61,8 +61,8 @@ class P2PClient {
                     byteArrayOutputStream.flush()
 
                     byteArrayOutputStream.close()
-                    //outputStream.close()
-                    //socket!!.close()
+                    outputStream.close()
+                    socket!!.close()
                 } catch (e: Exception) {
                     Log.d(TAG, e.toString())
                 }
@@ -99,14 +99,17 @@ class P2PClient {
 
                 try {
                     if (socket != null && !socket!!.isBound) {
+                        println("SOCKET WAS NOT BOUND")
                         socket?.bind(null)
                     }
 
                     if (socket != null && !socket!!.isConnected) {
+                        println("SOCKET WAS NOT CONNECTED")
                         socket?.connect(InetSocketAddress(serverAddress, 8993))
                     }
 
                     if (socket!!.isConnected) {
+                        println("SOCKET IS CONNECTED")
                         val inputStream = socket?.getInputStream()
                         val outputStream = ByteArrayOutputStream(32)
 
@@ -131,7 +134,7 @@ class P2PClient {
 
                         outputStream.flush()
 
-                        //socket!!.close()
+                        socket!!.close()
                     }
                     return true
 

@@ -69,7 +69,7 @@ class GameActivity : AppCompatActivity() {
                 Log.d("GameActivity", "THIS IS THE DEVICE STATE: " + deviceState.toString())
                 if (deviceState == DeviceP2PListeningState.SENDING) {
                     if (deviceIsOwner!!) {
-                        //P2PServer.Companion.StartServerForTransferTask().execute()
+                        P2PServer.Companion.StartServerForTransferTask().execute()
                         P2PServer.Companion.ServerMessageTransferTask(serverAddress!!).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
                         deviceState = DeviceP2PListeningState.RECEIVING

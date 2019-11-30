@@ -43,6 +43,7 @@ class P2PServer {
 
                     clientSocket = serverSocket?.accept()
 
+
                     if (isCancelled) return false
 
                     Log.d(TAG, "SERVER IS ON PORT " + serverSocket?.localPort)
@@ -69,8 +70,9 @@ class P2PServer {
                     outputStream.flush()
 
                     Log.d(TAG, "AFTER THE BUFFER FLUSH")
-                    //inputStream.close()
-                    //outputStream.close()
+                    inputStream.close()
+                    outputStream.close()
+                    serverSocket!!.close()
 
                     return true
                 } catch (e: Exception) {
@@ -85,6 +87,7 @@ class P2PServer {
                     println("GOT MESSAGE ON SERVER")
                     activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
 
+                    GameActivity.turnsLeft--
                     GameActivity.deviceState = DeviceP2PListeningState.SENDING
                 }
             }
@@ -95,7 +98,6 @@ class P2PServer {
         val TAG_TRANSFER = "P2PServer.TRANSFER"
 
         class StartServerForTransferTask: AsyncTask<InetAddress, Void, Void>() {
-
             override fun doInBackground(vararg p0: InetAddress?): Void? {
                 try {
                     openServerSocket()
@@ -171,17 +173,18 @@ class P2PServer {
                     byteArrayOutputStream.flush()
 
                     Log.d(TAG_TRANSFER, "AFTER FLUSHING OUTPUT STREAMS")
-                    //outputStream.close()
-                    //byteArrayOutputStream.close()
+                    outputStream.close()
+                    byteArrayOutputStream.close()
 
                 } catch (e: java.lang.Exception) {
                     Log.d("SERVERTRANSFERSERVICE", e.toString())
+
                 }
             }
 
             override fun onPostExecute(result: Void?) {
                 GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-                GameActivity.turnsLeft--
+
             }
         }
     }
