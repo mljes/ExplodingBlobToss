@@ -4,13 +4,13 @@
 
 <!-- TOC -->
 
-- [Abstract](#Abstract)
+- [Abstract](#abstract)
 	- [Group members](#group-members)
 	- [Description](#description)
-	- [Users](#users)
+		- [Introduction](#introduction)
+		- [Users](#users)
+		- [Mode, Medium, Environment](#mode-medium-environment)
 	- [Features](#features)
-		- [Features for Restaurant Application](#features-for-restaurant-application)
-		- [Features for Customer Application](#features-for-customer-application)
 	- [Libraries](#libraries)
 	- [Requirements](#requirements)
 	- [Installation Notes](#installation-notes)
@@ -42,7 +42,7 @@ Exploding Blob Toss is a mobile game designed to bring people together. It featu
 | Name                   | Banner ID  | Email               |
 | ---------------------- | ---------- | ------------------- |
 | Samantha Butler        | B00647590  | s.butler@dal.ca     |
-| Maria Jessen           | B00  | mjessen@dal.ca     |
+| Maria Jessen           | B00743170  | mjessen@dal.ca     |
 
 ## Description
 
@@ -82,10 +82,10 @@ Users will receive haptic feedback when the blob is passed to them and when they
 ## Requirements
 #### Minimum
 * Wifi-Direct compatible and enabled
-* Accelerometer
+* Accelerometer enabled
 
 #### Best Experience
-* Haptic feedback
+* Haptic feedback enabled
 
 ## Installation Notes
 
@@ -101,14 +101,29 @@ None
 - A random number, x, of turns is set at the beginning of the game. Immediately after the xth turn, the blob pops and the user who received the blob on that turn loses the round. (Completed)
 
 ### Expected Functionality
-- Feature 1 name (Completed)
-- Feature 2 name (Partially Completed)
-- Feature 3 (Not Implemented)
+
+- Time limit from when the user catches the blob to when the user must throw the blob to the next player (points gained until a user does not pass the blob fast enough) (Completed)
+
+- Users pass in forward direction (Completed)
+
+- When a phone receives the blob, it vibrates  (Completed)
+
+- Sound effects (Completed)
+
+- Simple sliding animations for blob (Completed)
 
 ### Bonus Functionality
-- Feature 1 name (Completed)
-- Feature 2 name (Partially Completed)
-- Feature 3 (Not Implemented)
+- 3D and/or animated blob (Not Implemented)
+
+- Richer animation for blob movement (Not Implemented)
+
+- Different game modes (Not Implemented)
+
+	- Set number of rounds (Not Implemented)
+
+	- Difficulty (speed and length of round) (Not Implemented)
+
+	- Multidirectional gameplay (Not Implemented)
 
 
 ## Code Examples
@@ -150,9 +165,7 @@ A diagram and description of the application's primary functions and decompositi
 [TODO: Identify and describe how this differs from High-level Organization.]
 
 ## High-level Organization
-
-The hierarchy or site map of the application.
-This can be reused from Updates 1 and 2, updated with any changes made since then.
+<img src="images/high-level-org.png" alt="high-lvl-org"/>
 
 ## Clickstreams
 <img src="images/blobTossClickstream.png" alt="Clickstream"/>
@@ -163,14 +176,10 @@ This can be reused from Updates 1 and 2, updated with any changes made since the
 * **Usecase 4:** Users want to go back to previous screen. Users can press the back button.
 
 ## Layout
+<img src="images/wireframes.png" alt="wireframes"/>
 
 Wire-frames of all the primary views and a brief description describing what each is for.
 This can be reused from Updates 1 and 2, updated with any changes made since then.
-
-## Prototypes
-
-If you did low-fidelity or high-fidelity prototypes, document the process here,
-including the results of your user testing. (Otherwise, delete this section.)
 
 ## Implementation
 
