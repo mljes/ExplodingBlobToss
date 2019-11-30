@@ -91,7 +91,6 @@ None
 ### Minimum Functionality
 - Two users can connect to game via Wifi Direct (Completed)
 - Users can pass a plain 2D object to each other using accelerometer motions (Completed)
-- Users set (via interface) where they are in relation to each other when connecting devices (Completed)
 - Usernames set automatically by system (Completed)
 - A random number, x, of turns is set at the beginning of the game. Immediately after the xth turn, the blob pops and the user who received the blob on that turn loses the round. (Completed)
 
@@ -173,8 +172,8 @@ A diagram and description of the application's primary functions and decompositi
 ## Layout
 <img src="images/wireframes.png" alt="wireframes"/>
 
-Wire-frames of all the primary views and a brief description describing what each is for.
-This can be reused from Updates 1 and 2, updated with any changes made since then.
+The first screen the user reaches is the "Main Menu" where the user can choose to learn how to play the game or start right away.
+The first screen after starting the game is the "Connect to Player" screen that is used to connect two player devices together via wifi-direct. After the user connects to another player it will move them to the "Main Game Activity" where users throw the object back and forth using motion gestures. Last is the "End Round" screen that displays after the round is over. The purpose of this screen is to let users decide whether to play again with same player, start a new connection with a different player or quit. 
 
 ## Implementation
 
@@ -183,8 +182,7 @@ interactions the user performs on the screens.
 
 ## Future Work
 
-A discussion of how the implementation can be extended or improved if you had more
-time and inclination to do so.
+In the future we would like to get Blob Toss working on a much larger multiplayer scale. Allow a whole group of players to toss the blob around in a multi-directional circle. We would add new levels of challenge by creating different game modes. Letting players choose which direction to "toss" the blob. We would also like to add more competitive aspects such as saving scores to leaderboards. 
 
 
 ## Sources
