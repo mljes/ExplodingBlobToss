@@ -22,6 +22,11 @@
     - [Functional Decomposition](#functional-decomposition)
     - [High-level Organization](#high-level-organization)
 	- [Clickstreams](#clickstreams)
+		- [Restaurant Detail Screen](#restaurant-detail-screen)
+		- [Coupon Sharing](#coupon-sharing)
+		- [View History](#view-history)
+		- [Logout Screen](#logout-screen)
+		- [Restaurants Dashboard](#restaurants-dashboard)
 	- [Layout](#layout)
 	- [Implementation](#implementation)
 	- [Future Work](#future-work)
@@ -189,3 +194,19 @@ time and inclination to do so.
 
 ## Sources
 
+Use IEEE citation style. Some examples:
+
+[1] J. Moule, _Killer UX Design: Create User Experiences to Wow Your Visitors_. Sitepoint, 2012.
+
+[2] _Ngspice_. (2011). [Online]. Available: http://ngspice.sourceforge.net
+
+[3] "Detect shaking of device in left or right direction in android?", StackOverflow.
+    https://stackoverflow.com/a/6225656 (accessed July 12, 2019).
+
+What to include in your project sources:
+- Stock images
+- Design guides
+- Programming tutorials
+- Research material
+- Android libraries
+- Everything listed on the Dalhousie [*Plagiarism and Cheating*](https://www.dal.ca/dept/university_secretariat/academic-integrity/plagiarism-cheating.html)

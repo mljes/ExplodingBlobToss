@@ -1,33 +1,37 @@
 package com.happycampers.explodingblobtoss
 
-import android.content.Context
-import android.net.Uri
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.HapticFeedbackConstants
+import android.widget.Button
+import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
-class tutorial : Fragment() {
+import kotlinx.android.synthetic.main.activity_tutorial.*
+
+class Tutorial : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_tutorial)
+        //back button on actionbar
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val startButton = findViewById<Button>(R.id.start_btn)
+        startButton.setOnClickListener {
+            startButton.performHapticFeedback(
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+            val intent = Intent(this, WifiPeerSetupActivity::class.java).apply {
+            }
+            startActivity(intent)
+        }
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        (activity as AppCompatActivity).supportActionBar?.show()
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tutorial, container, false)
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
-
-
-
-
-
 }

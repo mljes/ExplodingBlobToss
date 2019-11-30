@@ -15,6 +15,7 @@
         android:name="android.permission.INTERNET"
         android:required="true" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -24,17 +25,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme_PeerSetup">
         <activity
+            android:name=".Tutorial"
+            android:label="How to Play"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".MainActivity"
-            android:theme = "@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".WifiPeerSetupActivity"
-            android:label="Connect To Peers">
-        </activity>
+            android:label="Connect To Peers"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".GameActivity"
             android:screenOrientation="landscape"

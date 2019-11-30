@@ -22,9 +22,9 @@ class WifiDirectBroadcastReceiver constructor(
                         activity.setIsWifiP2pEnabled(true)
                     }
                     else -> {
-                        Toast.makeText(activity, "YOU DO NOT HAVE P2P ENABLED. BYE.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(activity, "Please enable p2p in your device settings", Toast.LENGTH_LONG).show()
                         activity.setIsWifiP2pEnabled(false)
-                        activity.resetData()
+                        activity.discoverPeers()
                     }
                 }
             }
@@ -40,7 +40,6 @@ class WifiDirectBroadcastReceiver constructor(
 
                 manager.requestConnectionInfo(channel, activity)
 
-                Toast.makeText(activity, "CONNECTION STATE HAS CHANGED", Toast.LENGTH_LONG).show()
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
                 var fragment: DeviceListFragment = activity.supportFragmentManager.findFragmentById(com.happycampers.explodingblobtoss.R.id.frag_list) as DeviceListFragment

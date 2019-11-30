@@ -16,14 +16,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
+import kotlinx.android.synthetic.main.activity_peer_setup.*
+
+
+
 
 class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener, WifiP2pManager.ConnectionInfoListener  {
     companion object {
@@ -48,6 +51,13 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peer_setup)
+        //back button on actionbar
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        //btn animations
+        val animation: Animation = AnimationUtils.loadAnimation(this,R.anim.bounce)
+        btn_connect.startAnimation(animation)
 
         val permissionList = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -67,13 +77,24 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         channel = manager.initialize(this, mainLooper, null)
 
+        //connect button
         findViewById<Button>(R.id.btn_connect).setOnClickListener { view: View? ->
+            view?.performHapticFeedback(
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+
             val config = WifiP2pConfig()
-            config.deviceAddress = deviceToPair?.deviceAddress
+            config.deviceAddress = deviceToPair.deviceAddress
 
             this.connect(config)
         }
-        resetData()
+        discoverPeers()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun getPermissions(permissionList: Array<String>) {
@@ -105,9 +126,16 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         unregisterReceiver(receiver)
     }
 
-    fun resetData() {
+    fun discoverPeers() {
         val discoverPeersBtn = findViewById(R.id.atn_direct_discover) as ImageView
+        val rotateAnimation: Animation = AnimationUtils.loadAnimation(this,R.anim.rotate)
         discoverPeersBtn.setOnClickListener {
+            discoverPeersBtn.startAnimation(rotateAnimation)
+            discoverPeersBtn.performHapticFeedback(
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+
             if (!isWifiP2pEnabled) {
                 Toast.makeText(this, "P2P is turned off.", Toast.LENGTH_LONG).show()
 
@@ -189,7 +217,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     override fun onChannelDisconnected() {
         if (manager != null && !retryChannel) {
             Toast.makeText(this@WifiPeerSetupActivity, "Channel lost. Trying again", Toast.LENGTH_LONG).show()
-            resetData()
+            discoverPeers()
             retryChannel = true
             manager.initialize(this@WifiPeerSetupActivity, mainLooper, this)
         }
@@ -251,8 +279,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         if (info.groupFormed && info.isGroupOwner) {
             Log.d("WifiPeerSetup", "THIS DEVICE IS THE SERVER/OWNER/PLAYER1")
 
-            //TODO: this needs to be moved to the GameActivity
-//            P2PServer.Companion.MessageServerAsyncTask().execute()
 
             task = P2PServer.Companion.StartServerForTransferTask()
             task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
