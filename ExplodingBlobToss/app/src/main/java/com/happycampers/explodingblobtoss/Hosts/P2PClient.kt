@@ -2,23 +2,38 @@ package com.happycampers.explodingblobtoss.Hosts
 
 import android.os.AsyncTask
 import android.util.Log
+import android.widget.TextView
+import com.happycampers.explodingblobtoss.DeviceP2PListeningState
+import com.happycampers.explodingblobtoss.GameActivity
+import com.happycampers.explodingblobtoss.R
+import kotlinx.android.synthetic.main.activity_game.view.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.lang.Exception
+import java.lang.ref.WeakReference
 import java.net.*
 
 class P2PClient {
     companion object {
-        class ClientMessageTransferTask(val address: InetAddress) : AsyncTask<InetAddress, Void?, Void>() {
+        class ClientMessageTransferTask(val address: InetAddress) : AsyncTask<Int, Void?, Void>() {
             private val TAG = "P2PClient.TRANSFER"
             private var socket: Socket? = null
 
-            override fun doInBackground(vararg p0: InetAddress?): Void? {
-                sendData(address)
+            override fun onPreExecute() {
+                if (GameActivity.deviceState == DeviceP2PListeningState.SENDING) {
+                    GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
+                }
+                else {
+                    cancel(false) //TODO: ensure this doesn't break safe calls
+                }
+            }
+
+            override fun doInBackground(vararg turnsLeft: Int?): Void? {
+                sendData(address, turnsLeft[0]!!)
                 return null
             }
 
-            private fun sendData(serverAddress: InetAddress) {
+            private fun sendData(serverAddress: InetAddress, turnsLeft: Int) {
                 if (socket == null) {
                     socket = Socket()
                 }
@@ -37,7 +52,7 @@ class P2PClient {
                     var outputStream: OutputStream = socket!!.getOutputStream()
                     var byteArrayOutputStream = ByteArrayOutputStream(32)
 
-                    message = "THIS IS MY MESSAGE"
+                    message = "$turnsLeft THIS IS THE CLIENT'S MESSAGE"
 
                     byteArrayOutputStream.write(message.toByteArray())
                     byteArrayOutputStream.writeTo(outputStream)
@@ -46,22 +61,32 @@ class P2PClient {
                     byteArrayOutputStream.flush()
 
                     byteArrayOutputStream.close()
-                    outputStream.close()
-                    socket!!.close()
+                    //outputStream.close()
+                    //socket!!.close()
                 } catch (e: Exception) {
                     Log.d(TAG, e.toString())
                 }
             }
+
+            override fun onPostExecute(result: Void?) {
+                GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
+                GameActivity.turnsLeft--
+            }
         }
 
-        class ClientMessageReceiveTask : AsyncTask<InetAddress, Void?, Void>() {
+        class ClientMessageReceiveTask(private val activity: WeakReference<GameActivity>): AsyncTask<InetAddress, Void?, String>() {
             private val TAG = "P2PClient.RECEIVE"
             private var socket: Socket? = null
             private var receiverRetryCount = 0
+            private var message: String? = null
 
-            override fun doInBackground(vararg p0: InetAddress?): Void? {
+            override fun doInBackground(vararg p0: InetAddress?): String? {
                 var receiving = receiveData(p0[0]!!)
                 while (receiving) {
+                    if (message != null) {
+                        return message!!
+                    }
+
                     receiving = receiveData(p0[0]!!)
                 }
                 return null
@@ -98,12 +123,15 @@ class P2PClient {
 
                         val messageString = outputStream.toString()
 
+                        this.message = messageString
 
                         println(
                             "MESSAGE FROM SERVER: " + messageString
                         )
 
                         outputStream.flush()
+
+                        //socket!!.close()
                     }
                     return true
 
@@ -120,6 +148,17 @@ class P2PClient {
                 catch (e: Exception) {
                     Log.d(TAG, e.toString())
                     return false
+                }
+            }
+
+            override fun onPostExecute(result: String?) {
+                println("IN POST EXECUTE CLIENT RECEIVE")
+                if (result != null && result.isNotEmpty()) {
+                    println("GOT A MESSAGE ON THE CLIENT")
+                    activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
+
+                    GameActivity.deviceState = DeviceP2PListeningState.SENDING
+                    GameActivity.turnsLeft = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
                 }
             }
         }

@@ -10,13 +10,20 @@ import com.example.android.diceroller.ShakeDetector
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
 import java.lang.NullPointerException
+import java.lang.ref.WeakReference
 import java.net.InetAddress
+import java.util.*
 
 class GameActivity : AppCompatActivity() {
     private lateinit var shakeDetector: ShakeDetector
     private var accelerometerSupported = false
     private var deviceIsOwner: Boolean? = null
     private var serverAddress: InetAddress? = null
+
+    companion object {
+        var deviceState: DeviceP2PListeningState = DeviceP2PListeningState.UNDEFINED
+        var turnsLeft: Int = -1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +36,20 @@ class GameActivity : AppCompatActivity() {
         val intent = getIntent()
         deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
+
+        if (deviceIsOwner!!) {
+            turnsLeft = Random().nextInt(11 + 5)
+            deviceState = DeviceP2PListeningState.SENDING
+
+            P2PServer.Companion.MessageServerAsyncTask(WeakReference(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+        }
+        else {
+            Log.d("GameActivity", "Starting receiving socket on client for first turn from server.")
+
+            P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this)).execute(serverAddress)
+
+            deviceState = DeviceP2PListeningState.RECEIVING
+        }
 
         serverAddress ?: run {
             Log.e("GameActivity", "Could not obtain server address from intent.")
@@ -45,11 +66,21 @@ class GameActivity : AppCompatActivity() {
             override fun onShake(force: Float) {
                 println(force)
 
-                if (deviceIsOwner!!) {
-                    P2PServer.Companion.ServerMessageTransferTask(serverAddress!!).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-                }
-                else {
-                    P2PClient.Companion.ClientMessageTransferTask(serverAddress!!).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+                Log.d("GameActivity", "THIS IS THE DEVICE STATE: " + deviceState.toString())
+                if (deviceState == DeviceP2PListeningState.SENDING) {
+                    if (deviceIsOwner!!) {
+                        //P2PServer.Companion.StartServerForTransferTask().execute()
+                        P2PServer.Companion.ServerMessageTransferTask(serverAddress!!).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+
+                        deviceState = DeviceP2PListeningState.RECEIVING
+                        P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
+                    }
+                    else {
+                        P2PClient.Companion.ClientMessageTransferTask(serverAddress!!).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
+
+                        deviceState = DeviceP2PListeningState.RECEIVING
+                        P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
+                    }
                 }
             }
         })

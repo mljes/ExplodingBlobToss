@@ -246,71 +246,44 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     override fun onConnectionInfoAvailable(info: WifiP2pInfo?) {
         this.info = info
 
-        println("JUST BEFORE THE CLICKLISTENER")
-
-        findViewById<Button>(R.id.continue_btn).setOnClickListener { view: View? ->
-            println("IN HERRREEEE")
-            val intent = Intent(this@WifiPeerSetupActivity, GameActivity::class.java).apply {
-                println("IS IT NULL? " + (null == info))
-
-                this.putExtra("IS_OWNER", info!!.isGroupOwner)
-
-                println("IS ADDRESS NULL? " + (null == info.groupOwnerAddress))
-                this.putExtra("SERVER_ADDRESS", info.groupOwnerAddress)
-            }
-            startActivity(intent)
-        }
-
-        // known owner IP
-        //val ownerView: TextView = findViewById(R.id.group_owner)
-
-        var answer = ""
-
-        if (info!!.isGroupOwner) answer = "YES"
-        else answer = "NO"
-
-        //ownerView.setText(resources.getString(R.string.group_owner_text) + answer)
-
-        //InetAddress from WifiP2pInfo
-        //val deviceInfoView: TextView = findViewById(R.id.device_info)
-        //deviceInfoView.text = "Group Owner IP: " + info.groupOwnerAddress?.hostAddress
+        info ?: return
 
         if (info.groupFormed && info.isGroupOwner) {
-            println("just before messageserverasynctask")
-            P2PServer.Companion.MessageServerAsyncTask().execute()
-            println("just before startserverfortransfertask")
+            Log.d("WifiPeerSetup", "THIS DEVICE IS THE SERVER/OWNER/PLAYER1")
+
+            //TODO: this needs to be moved to the GameActivity
+//            P2PServer.Companion.MessageServerAsyncTask().execute()
+
             task = P2PServer.Companion.StartServerForTransferTask()
+            task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
-            task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)//execute(info!!.groupOwnerAddress)
-
-            /*
-            val button = findViewById<Button>(R.id.btn_start_client)
-
-            button.setOnClickListener {
-                P2PServer.Companion.ServerMessageTransferTask(info!!.groupOwnerAddress).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR)
-            }
-
-            button.visibility = View.VISIBLE
-            */
+            startGameActivity(info)
         }
         else if (info.groupFormed) {
-            println("before clientmessagereceive")
+            Log.d("WifiPeerSetup","THIS DEVICE IS THE CLIENT/PLAYER2")
 
-            P2PClient.Companion.ClientMessageReceiveTask().execute(info.groupOwnerAddress)
-            println("after clientmessagereceive")
-
-            /*
-            val button = findViewById<Button>(R.id.btn_start_client)
-
-            button.setOnClickListener {
-                println("Set click listener for CLIENT")
-                P2PClient.Companion.ClientMessageTransferTask(info.groupOwnerAddress).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR)
-            }
-
-            button.visibility = View.VISIBLE
-            */
+            startGameActivity(info)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        try {
+            unregisterReceiver(receiver)
+        }
+        catch (e:Exception) {
+            Log.e("WifiPeerSetup", "Could not unregister receiver: " + e.toString())
+        }
+    }
+
+
+    fun startGameActivity(info: WifiP2pInfo) {
+        val intent = Intent(this@WifiPeerSetupActivity, GameActivity::class.java).apply {
+            this.putExtra("IS_OWNER", info.isGroupOwner)
+            this.putExtra("SERVER_ADDRESS", info.groupOwnerAddress)
+        }
+
+        startActivity(intent)
     }
 }
