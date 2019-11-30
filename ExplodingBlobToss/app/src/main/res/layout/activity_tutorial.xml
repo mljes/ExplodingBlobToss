@@ -18,6 +18,23 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <Button
+            android:id="@+id/start_btn"
+            style="@style/button_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="120dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/accent_button"
+            android:text="@string/start_game_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tutorial_subtitle3" />
+
         <TextView
             android:id="@+id/tutorial_heading3"
             android:layout_width="match_parent"

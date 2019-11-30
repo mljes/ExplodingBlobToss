@@ -1,6 +1,9 @@
 package com.happycampers.explodingblobtoss
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
+import android.widget.Button
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
@@ -14,8 +17,19 @@ class Tutorial : AppCompatActivity() {
         //back button on actionbar
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val startButton = findViewById<Button>(R.id.start_btn)
+        startButton.setOnClickListener {
+            startButton.performHapticFeedback(
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+            val intent = Intent(this, WifiPeerSetupActivity::class.java).apply {
+            }
+            startActivity(intent)
+        }
 
     }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true

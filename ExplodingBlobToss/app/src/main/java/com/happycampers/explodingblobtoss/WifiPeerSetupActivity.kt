@@ -58,7 +58,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         //btn animations
         val animation: Animation = AnimationUtils.loadAnimation(this,R.anim.bounce)
         btn_connect.startAnimation(animation)
-        continue_btn.startAnimation(animation)
 
         val permissionList = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -277,18 +276,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
         println("JUST BEFORE THE CLICKLISTENER")
 
-        findViewById<Button>(R.id.continue_btn).setOnClickListener { view: View? ->
-            println("IN HERRREEEE")
-            val intent = Intent(this@WifiPeerSetupActivity, GameActivity::class.java).apply {
-                println("IS IT NULL? " + (null == info))
 
-                this.putExtra("IS_OWNER", info!!.isGroupOwner)
-
-                println("IS ADDRESS NULL? " + (null == info.groupOwnerAddress))
-                this.putExtra("SERVER_ADDRESS", info.groupOwnerAddress)
-            }
-            startActivity(intent)
-        }
 
         // known owner IP
         //val ownerView: TextView = findViewById(R.id.group_owner)
