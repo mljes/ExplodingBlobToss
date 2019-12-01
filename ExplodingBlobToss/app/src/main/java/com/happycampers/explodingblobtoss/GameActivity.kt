@@ -33,19 +33,7 @@ class GameActivity : AppCompatActivity() {
         lateinit var  catchAnimation:Animation
         lateinit var blob:ImageView
 
-        fun throwBlob(){
-            blob.startAnimation(throwAnimation)
-            blob.visibility = View.INVISIBLE
-            deviceState = DeviceP2PListeningState.RECEIVING
-            turnsLeft--
-        }
-        fun catchBlob(result:String?){
-            blob.visibility = View.VISIBLE
-            blob.startAnimation(catchAnimation)
-            deviceState = DeviceP2PListeningState.SENDING
-            turnsLeft = result!!.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
-        }
 
     }
 
@@ -59,6 +47,7 @@ class GameActivity : AppCompatActivity() {
         throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
         blob = findViewById(R.id.blob_ImageView)
+
 
 
         shakeDetector = ShakeDetector(this)
@@ -102,6 +91,7 @@ class GameActivity : AppCompatActivity() {
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11 + 5)
             deviceState = DeviceP2PListeningState.SENDING
+            blob.visibility = View.VISIBLE
 
 
 
@@ -177,6 +167,37 @@ class GameActivity : AppCompatActivity() {
         }
 
         startActivity(intent)
+    }
+
+    fun throwBlob(){
+        blob.startAnimation(throwAnimation)
+        blob.visibility = View.INVISIBLE
+
+        if (turnsLeft == 0) {
+            deviceState = DeviceP2PListeningState.FINISHED
+            startGameEndActivity(true)
+        }
+        else {
+            deviceState = DeviceP2PListeningState.RECEIVING
+        }
+    }
+
+    fun catchBlob(result:String?){
+        blob.visibility = View.VISIBLE
+        blob.startAnimation(catchAnimation)
+        val turnCountFromServer = result!!.split(" ", ignoreCase = true, limit = 0)[0].toInt()
+
+        if (0 == turnCountFromServer) {
+            deviceState = DeviceP2PListeningState.FINISHED
+
+            startGameEndActivity(false)
+        }
+        else {
+
+            deviceState = DeviceP2PListeningState.SENDING
+            turnsLeft = (turnCountFromServer - 1)
+        }
+
     }
 
 }

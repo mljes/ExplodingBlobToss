@@ -90,20 +90,7 @@ class P2PServer {
                 if (result != null && result.isNotEmpty()) {
                     println("GOT MESSAGE ON SERVER")
 
-                    val turnCountFromClient = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
-
-                    if (0 == turnCountFromClient) {
-                        GameActivity.deviceState = DeviceP2PListeningState.FINISHED
-
-                        activity.get()!!.startGameEndActivity(false)
-                    }
-
-                    else {
-                        activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
-
-                        GameActivity.turnsLeft = (turnCountFromClient - 1)
-                        GameActivity.deviceState = DeviceP2PListeningState.SENDING
-                    }
+                    activity.get()!!.catchBlob(result)
                 }
             }
         }
@@ -188,13 +175,7 @@ class P2PServer {
             }
 
             override fun onPostExecute(result: Void?) {
-                if (GameActivity.turnsLeft == 0) {
-                    GameActivity.deviceState = DeviceP2PListeningState.FINISHED
-                    activity.get()!!.startGameEndActivity(true)
-                }
-                else {
-                    GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-                }
+                activity.get()!!.throwBlob()
             }
         }
     }
