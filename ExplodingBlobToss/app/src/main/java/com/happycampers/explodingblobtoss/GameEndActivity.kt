@@ -1,14 +1,10 @@
 package com.happycampers.explodingblobtoss
-
-import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import java.net.InetAddress
 import android.widget.*
-import java.lang.reflect.Type
-import java.util.*
 
 class GameEndActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,12 +32,25 @@ class GameEndActivity : AppCompatActivity() {
             startActivity(intent)
         }
         findViewById<Button>(R.id.restart_btn).setOnClickListener {
-            val intent = Intent(this@GameEndActivity, WifiPeerSetupActivity::class.java)
-
-            startActivity(intent)
+            goToWifiPeerSetupActivity()
         }
         findViewById<Button>(R.id.quit_btn).setOnClickListener {
             onDestroy()
         }
+    }
+
+    override fun onBackPressed() {
+        goToWifiPeerSetupActivity()
+    }
+
+    private fun goToWifiPeerSetupActivity() {
+        GameActivity.roundNumber = 1
+        GameActivity.score = 0
+
+        val intent = Intent(this@GameEndActivity, WifiPeerSetupActivity::class.java).apply {
+            this.putExtra("IS_FIRST_ROUND", false)
+        }
+
+        startActivity(intent)
     }
 }
