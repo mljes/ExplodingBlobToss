@@ -35,20 +35,21 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         lateinit var deviceToPair: WifiP2pDevice
     }
 
-    private lateinit var manager: WifiP2pManager
     private var isWifiP2pEnabled = false
     private var retryChannel = false
-
-    private lateinit var intentFilter: IntentFilter
+    private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
+    private lateinit var intentFilter: IntentFilter
     private lateinit var receiver: BroadcastReceiver
     private var info: WifiP2pInfo? = null
-
-    private var task: P2PServer.Companion.StartServerForTransferTask? = null
+    private var isFirstRound: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peer_setup)
+
+        isFirstRound = intent.getBooleanExtra("IS_FIRST_ROUND", false)
+
         //back button on actionbar
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -87,7 +88,16 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
             this.connect(config)
         }
+
         discoverPeers()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (!isFirstRound!!) {
+            disconnect()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -196,9 +206,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     }
 
     override fun disconnect() {
-        //val fragment: DeviceDetailFragment2 = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment2
-        //fragment.resetViews()
-
         manager.removeGroup(channel, object: ActionListener {
             override fun onFailure(reasonCode: Int) {
                 Log.d(".....", "DISCONNECT FAILED: " + reasonCode)
