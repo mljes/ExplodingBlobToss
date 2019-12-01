@@ -29,7 +29,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <ImageView
         android:id="@+id/front_arrow"
         android:layout_width="150dp"
@@ -38,6 +37,7 @@
         android:cropToPadding="true"
         android:rotation="90"
         android:scaleType="centerInside"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/relativelayout"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,9 +70,10 @@
             style="@style/title_text"
             android:layout_alignBottom="@id/blob_ImageView"
             android:layout_marginTop="20dp"
-            android:text="@string/instructions_title"
             android:layout_marginBottom="20dp"
-            android:textColor="@color/myWhite" />
+            android:text="@string/instructions_title"
+            android:textColor="@color/myWhite"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/round_count_lbl"

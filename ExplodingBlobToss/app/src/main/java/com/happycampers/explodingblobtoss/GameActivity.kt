@@ -1,6 +1,8 @@
 package com.happycampers.explodingblobtoss
 
 import android.content.Intent
+import android.media.Image
+import android.media.MediaPlayer
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,19 +23,22 @@ import java.lang.ref.WeakReference
 import java.net.InetAddress
 import java.util.*
 
+//sound clip attribution: from freesound.com FoolBoy Media, and Adam_N
 class GameActivity : AppCompatActivity() {
     private lateinit var shakeDetector: ShakeDetector
     private var accelerometerSupported = false
     private var deviceIsOwner: Boolean? = null
     private var serverAddress: InetAddress? = null
+    private lateinit var guideArrow:ImageView
+    private lateinit var instructionText:TextView
+    private lateinit var gameOverSplat:MediaPlayer
+    private lateinit var throwSplat:MediaPlayer
     companion object {
         var deviceState: DeviceP2PListeningState = DeviceP2PListeningState.UNDEFINED
         var turnsLeft: Int = -1
         lateinit var throwAnimation:Animation
         lateinit var  catchAnimation:Animation
         lateinit var blob:ImageView
-
-
 
     }
 
@@ -44,12 +49,13 @@ class GameActivity : AppCompatActivity() {
         val pauseMenu = findViewById<FrameLayout>(R.id.pause_menu)
         val resumeButton = findViewById<Button>(R.id.resume_button)
         val quitButton = findViewById<Button>(R.id.quit_button)
+        guideArrow = findViewById<ImageView>(R.id.front_arrow)
         throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
+        gameOverSplat = MediaPlayer.create(this,R.raw.game_over_splat)
+        throwSplat = MediaPlayer.create(this,R.raw.throw_splash)
         blob = findViewById(R.id.blob_ImageView)
-
-
-
+        instructionText = findViewById(R.id.instructions)
         shakeDetector = ShakeDetector(this)
 
 //Pause Button
@@ -87,13 +93,14 @@ class GameActivity : AppCompatActivity() {
         val intent = getIntent()
         deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
-
+//setup player one start state
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11 + 5)
             deviceState = DeviceP2PListeningState.SENDING
             blob.visibility = View.VISIBLE
-
-
+            guideArrow.visibility = View.VISIBLE
+            instructionText.text = "Pass the blob before it explodes!"
+            instructionText.visibility = View.VISIBLE
 
             P2PServer.Companion.StartServerForTransferTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
@@ -101,9 +108,7 @@ class GameActivity : AppCompatActivity() {
         }
         else {
             Log.d("GameActivity", "Starting receiving socket on client for first turn from server.")
-
             P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this)).execute(serverAddress)
-
             deviceState = DeviceP2PListeningState.RECEIVING
         }
 
@@ -170,8 +175,10 @@ class GameActivity : AppCompatActivity() {
     }
 
     fun throwBlob(){
+        guideArrow.visibility = View.INVISIBLE
         blob.startAnimation(throwAnimation)
         blob.visibility = View.INVISIBLE
+        instructionText.text = "Catch the blob from your opponent!"
 
         if (turnsLeft == 0) {
             deviceState = DeviceP2PListeningState.FINISHED
@@ -183,13 +190,17 @@ class GameActivity : AppCompatActivity() {
     }
 
     fun catchBlob(result:String?){
+        throwSplat.start()
         blob.visibility = View.VISIBLE
         blob.startAnimation(catchAnimation)
+        guideArrow.visibility = View.VISIBLE
+        instructionText.text = "Pass the blob before it explodes!"
+        instructionText.visibility = View.VISIBLE
         val turnCountFromServer = result!!.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
         if (0 == turnCountFromServer) {
+            gameOverSplat.start()
             deviceState = DeviceP2PListeningState.FINISHED
-
             startGameEndActivity(false)
         }
         else {
