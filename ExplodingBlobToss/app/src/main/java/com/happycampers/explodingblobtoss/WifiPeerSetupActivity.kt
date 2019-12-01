@@ -44,6 +44,8 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     private var info: WifiP2pInfo? = null
     private var isFirstRound: Boolean? = null
 
+    lateinit var connectButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peer_setup)

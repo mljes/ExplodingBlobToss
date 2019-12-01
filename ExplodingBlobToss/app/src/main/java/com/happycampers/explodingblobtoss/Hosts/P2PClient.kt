@@ -25,16 +25,6 @@ class P2PClient {
             private val TAG = "P2PClient.TRANSFER"
             private var socket: Socket? = null
 
-            override fun onPreExecute() {
-
-                if (GameActivity.deviceState == DeviceP2PListeningState.SENDING) {
-                    GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-                }
-                else {
-                    cancel(false) //TODO: ensure this doesn't break safe calls
-                }
-            }
-
             override fun doInBackground(vararg turnsLeft: Int?): Void? {
                 sendData(address, turnsLeft[0]!!)
                 return null
@@ -165,9 +155,16 @@ class P2PClient {
             override fun onPostExecute(result: String?) {
                 println("IN POST EXECUTE CLIENT RECEIVE")
                 if (result != null && result.isNotEmpty()) {
-                    println("GOT A MESSAGE ON THE CLIENT")
+                    println("GOT MESSAGE ON CLIENT")
 
-                    activity.get()!!.catchBlob(result)
+                    val messageCode = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
+
+                    if (messageCode == -2) {
+                        activity.get()!!.startGameEndActivity(true)
+                    }
+                    else {
+                        activity.get()!!.catchBlob(result)
+                    }
                 }
             }
         }

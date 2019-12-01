@@ -89,7 +89,14 @@ class P2PServer {
                 if (result != null && result.isNotEmpty()) {
                     println("GOT MESSAGE ON SERVER")
 
-                    activity.get()!!.catchBlob(result)
+                    val messageCode = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
+
+                    if (messageCode == -2) {
+                        activity.get()!!.startGameEndActivity(true)
+                    }
+                    else {
+                        activity.get()!!.catchBlob(result)
+                    }
                 }
             }
         }

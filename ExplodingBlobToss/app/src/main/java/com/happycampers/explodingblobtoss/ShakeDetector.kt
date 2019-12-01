@@ -1,10 +1,11 @@
-package com.example.android.diceroller
+package com.happycampers.explodingblobtoss
 
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import android.widget.Toast
 import kotlin.math.abs
 
@@ -14,7 +15,7 @@ Note - Obtained from CSCI4176 Lab 4 base code.
 class ShakeDetector(val context: Context) {
 
     interface ShakeListener {
-        fun onShake(force: Float)
+        fun onShake(force: Float, x: Float, y: Float, z: Float)
     }
 
     /**
@@ -86,8 +87,12 @@ class ShakeDetector(val context: Context) {
                     if (force.compareTo(threshold) > 0) {
 
                         if (now - lastShake >= interval) {
+                            Log.d("SHAKE X:", "$x")
+                            Log.d("SHAKE Y:", "$y")
+                            Log.d("SHAKE Z:","$z")
+
                             // trigger shake event
-                            listener?.onShake(force)
+                            listener?.onShake(force, x, y, z)
                         } else {
                             Toast.makeText(context, "No Motion detected",
                                 Toast.LENGTH_SHORT).show()

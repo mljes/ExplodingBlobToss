@@ -2,7 +2,6 @@ package com.happycampers.explodingblobtoss
 
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.media.MediaPlayer
 import android.os.*
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +11,8 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
-import com.example.android.diceroller.ShakeDetector
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
-import java.lang.NullPointerException
 import java.lang.ref.WeakReference
 import java.net.InetAddress
 import java.util.*
@@ -137,23 +134,37 @@ class GameActivity : AppCompatActivity() {
         checkShakeDetectorSupported()
 
         shakeDetector.startListening(object: ShakeDetector.ShakeListener {
-            override fun onShake(force: Float) {
-                println(force)
-
+            override fun onShake(force: Float, x: Float, y: Float, z: Float) {
                 Log.d("GameActivity", "THIS IS THE DEVICE STATE: " + deviceState.toString())
                 if (deviceState == DeviceP2PListeningState.SENDING) {
-                    if (deviceIsOwner!!) {
-                        P2PServer.Companion.StartServerForTransferTask().execute()
-                        P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
-                        deviceState = DeviceP2PListeningState.RECEIVING
-                        P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
+                    if (x < 0) { //shook in wrong direction for throw
+                        deviceState = DeviceP2PListeningState.FINISHED
+
+                        if (deviceIsOwner!!) {
+                            P2PServer.Companion.StartServerForTransferTask().execute()
+                            P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, -2)
+                        }
+                        else {
+                            P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(-2)
+                        }
+
+                        startGameEndActivity(false)
                     }
-                    else {
-                        P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
+                    else { //shook in correct direction for throw
+                        if (deviceIsOwner!!) {
+                            P2PServer.Companion.StartServerForTransferTask().execute()
+                            P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
-                        deviceState = DeviceP2PListeningState.RECEIVING
-                        P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
+                            deviceState = DeviceP2PListeningState.RECEIVING
+                            P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
+                        }
+                        else {
+                            P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
+
+                            deviceState = DeviceP2PListeningState.RECEIVING
+                            P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
+                        }
                     }
                 }
             }
