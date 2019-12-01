@@ -76,7 +76,7 @@ class GameActivity : AppCompatActivity() {
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
-            pauseMenu.visibility = View.GONE;
+            pauseMenu.visibility = View.INVISIBLE
             onResume()
         }
         //quit to menu

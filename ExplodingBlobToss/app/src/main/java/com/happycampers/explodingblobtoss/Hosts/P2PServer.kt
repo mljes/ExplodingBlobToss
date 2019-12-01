@@ -28,7 +28,6 @@ class P2PServer {
                 var receiving = receiveData()
                 while (receiving) {
                     Log.d(TAG, "BEFORE THE IF")
-
                     if (message != null) {
                         Log.d(TAG, "GOT THE MESSAGE SHOULD RETURN")
                         return message!!
