@@ -103,6 +103,10 @@ class GameActivity : AppCompatActivity() {
             turnsLeft = Random().nextInt(11 + 5)
             deviceState = DeviceP2PListeningState.SENDING
 
+
+
+            P2PServer.Companion.StartServerForTransferTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+
             P2PServer.Companion.MessageServerAsyncTask(WeakReference(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         }
         else {
@@ -132,13 +136,13 @@ class GameActivity : AppCompatActivity() {
                 if (deviceState == DeviceP2PListeningState.SENDING) {
                     if (deviceIsOwner!!) {
                         P2PServer.Companion.StartServerForTransferTask().execute()
-                        P2PServer.Companion.ServerMessageTransferTask(serverAddress!!).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+                        P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
                         deviceState = DeviceP2PListeningState.RECEIVING
                         P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
                     }
                     else {
-                        P2PClient.Companion.ClientMessageTransferTask(serverAddress!!).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
+                        P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
 
                         deviceState = DeviceP2PListeningState.RECEIVING
                         P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
@@ -154,8 +158,6 @@ class GameActivity : AppCompatActivity() {
         shakeDetector.stopListening()
     }
 
-
-    //TODO: add start button that sends starting message to both devices (?)
     private fun checkShakeDetectorSupported() {
         if (!shakeDetector.isSupported()) {
             accelerometerSupported = false
@@ -167,6 +169,14 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun countDown() {}
+    fun startGameEndActivity(isWinner: Boolean) {
+        val intent = Intent(this@GameActivity, GameEndActivity::class.java).apply {
+            this.putExtra("IS_OWNER", deviceIsOwner)
+            this.putExtra("IS_WINNER", isWinner)
+            this.putExtra("SERVER_ADDRESS", serverAddress)
+        }
+
+        startActivity(intent)
+    }
 
 }

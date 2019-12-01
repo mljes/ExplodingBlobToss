@@ -1,5 +1,5 @@
 package com.happycampers.explodingblobtoss
 
 enum class DeviceP2PListeningState {
-    RECEIVING, SENDING, PROCESSING, UNDEFINED
+    RECEIVING, SENDING, UNDEFINED, FINISHED
 }

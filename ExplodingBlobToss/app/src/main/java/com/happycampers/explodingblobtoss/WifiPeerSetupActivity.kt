@@ -21,7 +21,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
 import kotlinx.android.synthetic.main.activity_peer_setup.*
 
@@ -35,7 +34,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
         lateinit var deviceToPair: WifiP2pDevice
     }
-
 
     private lateinit var manager: WifiP2pManager
     private var isWifiP2pEnabled = false
@@ -273,23 +271,27 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
     override fun onConnectionInfoAvailable(info: WifiP2pInfo?) {
         this.info = info
-Log.i("SAMError", "Happened")
+
+        println("IN ONCONNECTIONINFOAVAIL")
+
         info ?: return
+
+        println("GROUPEFORMED: " + info.groupFormed)
 
         if (info.groupFormed && info.isGroupOwner) {
             Log.d("WifiPeerSetup", "THIS DEVICE IS THE SERVER/OWNER/PLAYER1")
-
-
-            task = P2PServer.Companion.StartServerForTransferTask()
-            task!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
             startGameActivity(info)
         }
         else if (info.groupFormed) {
             Log.d("WifiPeerSetup","THIS DEVICE IS THE CLIENT/PLAYER2")
 
+            println("IN THE CLIENT CALL")
+
             startGameActivity(info)
         }
+
+        println("GOT ALL THE WAY PAST THE IFS")
     }
 
     override fun onStop() {
@@ -305,11 +307,13 @@ Log.i("SAMError", "Happened")
 
 
     fun startGameActivity(info: WifiP2pInfo) {
+        println("I'M TRYING TO START THE GAME")
         val intent = Intent(this@WifiPeerSetupActivity, GameActivity::class.java).apply {
             this.putExtra("IS_OWNER", info.isGroupOwner)
             this.putExtra("SERVER_ADDRESS", info.groupOwnerAddress)
         }
 
+        println("ABOUT TO START ACTIVITY")
         startActivity(intent)
     }
 }
