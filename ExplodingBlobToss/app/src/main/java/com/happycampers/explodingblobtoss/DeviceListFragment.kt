@@ -10,18 +10,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.ListFragment
+import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.activity_peer_setup.*
 import java.lang.Exception
 
 class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
     private var peers: MutableList<WifiP2pDevice> = ArrayList()
     lateinit var contentView: View
     private lateinit var device: WifiP2pDevice
-
     companion object {
         private fun getDeviceStatus(deviceStatus: Int): String {
             when (deviceStatus) {
@@ -57,7 +55,6 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
         catch (e: Exception) {
             Log.e("DEVICELISTFRAGMENT", e.message)
         }
-
         return contentView
     }
 
@@ -141,7 +138,7 @@ class DeviceListFragment: ListFragment(), WifiP2pManager.PeerListListener{
 
     override fun onListItemClick(l: ListView?, v: View?, position: Int, id: Long) {
         val device: WifiP2pDevice = listAdapter.getItem(position) as WifiP2pDevice
-
+        activity!!.btn_connect.isEnabled = true
         //todo
         WifiPeerSetupActivity.deviceToPair = device
     }

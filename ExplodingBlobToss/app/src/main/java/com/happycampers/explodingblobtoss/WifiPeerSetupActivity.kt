@@ -43,6 +43,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     private lateinit var channel: WifiP2pManager.Channel
     private lateinit var receiver: BroadcastReceiver
     private var info: WifiP2pInfo? = null
+    lateinit var connectButton: Button
 
     private var task: P2PServer.Companion.StartServerForTransferTask? = null
 
@@ -52,6 +53,8 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
         //back button on actionbar
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        connectButton = findViewById(R.id.btn_connect)
+        connectButton.isEnabled = false
 
         //btn animations
         val animation: Animation = AnimationUtils.loadAnimation(this,R.anim.bounce)

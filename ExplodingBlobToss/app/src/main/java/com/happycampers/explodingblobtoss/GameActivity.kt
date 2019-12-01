@@ -54,7 +54,9 @@ class GameActivity : AppCompatActivity() {
         throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
         gameOverSplat = MediaPlayer.create(this,R.raw.game_over_splat)
+        gameOverSplat.setVolume(0.1f,0.1f)
         throwSplat = MediaPlayer.create(this,R.raw.throw_splash)
+        throwSplat.setVolume(0.1f,0.1f)
         blob = findViewById(R.id.blob_ImageView)
         instructionText = findViewById(R.id.instructions)
         shakeDetector = ShakeDetector(this)
@@ -210,7 +212,7 @@ class GameActivity : AppCompatActivity() {
             throwSplat.start()
         }
         if(hapticSwitch.isChecked){
-            vibratePhone()
+            vibratePhone(100)
         }
         blob.visibility = View.VISIBLE
         blob.startAnimation(catchAnimation)
@@ -234,12 +236,12 @@ class GameActivity : AppCompatActivity() {
 
     }
 
-    fun vibratePhone() {
+    fun vibratePhone(length:Long) {
         val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator.vibrate(VibrationEffect.createOneShot(length, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
-            vibrator.vibrate(200)
+            vibrator.vibrate(length)
         }
     }
 
