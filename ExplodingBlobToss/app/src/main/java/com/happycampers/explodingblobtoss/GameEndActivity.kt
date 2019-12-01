@@ -27,8 +27,11 @@ class GameEndActivity : AppCompatActivity() {
         val roundStatusTextView = findViewById<TextView>(R.id.round_result_title)
         roundStatusTextView.text = gameText
 
+        GameActivity.roundNumber++
+
         if (isWinner) {
             Splat_ImageView.visibility = View.INVISIBLE
+            GameActivity.score++
 
         }
         else {
@@ -36,13 +39,13 @@ class GameEndActivity : AppCompatActivity() {
 
         }
 
-
         //next round button
         findViewById<Button>(R.id.next_round_btn).setOnClickListener {
             next_round_btn.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
+
             val intent = Intent(this@GameEndActivity, GameActivity::class.java).apply {
                 this.putExtra("IS_OWNER", deviceIsOwner)
                 this.putExtra("SERVER_ADDRESS", serverAddress)

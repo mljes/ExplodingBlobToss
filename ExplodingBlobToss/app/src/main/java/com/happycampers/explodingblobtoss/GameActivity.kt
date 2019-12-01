@@ -247,9 +247,6 @@ class GameActivity : AppCompatActivity() {
         instructionText.text = "Catch the blob from your opponent!"
 
         if (turnsLeft == 0) {
-            score++
-            roundNumber++
-
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(true, "You win!")
         }
