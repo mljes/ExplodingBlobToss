@@ -98,7 +98,7 @@ class GameActivity : AppCompatActivity() {
         val intent = getIntent()
         deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
-//setup player one start state
+
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11) + 6
             deviceState = DeviceP2PListeningState.SENDING

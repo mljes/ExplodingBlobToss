@@ -36,11 +36,9 @@ class MainActivity : AppCompatActivity() {
         tutorial_btn.setOnClickListener {
             tutorial_btn.performHapticFeedback(VIRTUAL_KEY,FLAG_IGNORE_GLOBAL_SETTING)
             val intent = Intent(this,Tutorial::class.java).apply {
-
+                this.putExtra("IS_FIRST_ROUND", true)
             }
             startActivity(intent)
         }
     }
 }
-
-
