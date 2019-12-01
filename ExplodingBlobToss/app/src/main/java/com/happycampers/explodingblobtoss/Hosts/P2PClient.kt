@@ -49,6 +49,7 @@ class P2PClient {
 
                 try {
                     if (socket != null && !socket!!.isBound) {
+                        socket?.reuseAddress = true
                         socket?.bind(null)
                     }
 
