@@ -196,9 +196,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
     }
 
     override fun disconnect() {
-        //val fragment: DeviceDetailFragment2 = supportFragmentManager.findFragmentById(R.id.frag_detail) as DeviceDetailFragment2
-        //fragment.resetViews()
-
         manager.removeGroup(channel, object: ActionListener {
             override fun onFailure(reasonCode: Int) {
                 Log.d(".....", "DISCONNECT FAILED: " + reasonCode)
