@@ -13,6 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import com.example.android.diceroller.ShakeDetector
+import com.happycampers.explodingblobtoss.Common.AdminMessage
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
 import java.lang.NullPointerException
@@ -22,6 +23,8 @@ import java.util.*
 
 //sound clip attribution: from freesound.com FoolBoy Media, and Adam_N
 class GameActivity : AppCompatActivity() {
+    private val TAG = "GAMEACTIVITY"
+
     private lateinit var shakeDetector: ShakeDetector
     private var accelerometerSupported = false
     private var deviceIsOwner: Boolean? = null
@@ -32,6 +35,9 @@ class GameActivity : AppCompatActivity() {
     private lateinit var throwSplat:MediaPlayer
     private lateinit var audioSwitch:Switch
     private lateinit var hapticSwitch: Switch
+    private lateinit var pauseButton: ImageView
+    private lateinit var pauseMenu: FrameLayout
+    private lateinit var resumeButton: Button
 
     private var lastDeviceState = DeviceP2PListeningState.UNDEFINED
 
@@ -49,10 +55,12 @@ class GameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
-        val pauseButton = findViewById<ImageView>(R.id.pause_btn)
-        val pauseMenu = findViewById<FrameLayout>(R.id.pause_menu)
-        val resumeButton = findViewById<Button>(R.id.resume_button)
+
         val quitButton = findViewById<Button>(R.id.quit_button)
+
+        resumeButton = findViewById<Button>(R.id.resume_button)
+        pauseButton = findViewById<ImageView>(R.id.pause_btn)
+        pauseMenu = findViewById<FrameLayout>(R.id.pause_menu)
         guideArrow = findViewById<ImageView>(R.id.front_arrow)
         throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
@@ -66,31 +74,25 @@ class GameActivity : AppCompatActivity() {
 
         //Pause Button
         pauseButton.setOnClickListener {
+            sendAdministrativeMessage(AdminMessage.PAUSE)
+
             pauseButton.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
 
-            pauseButton.isEnabled = false
-
-            pauseMenu.visibility = View.VISIBLE
-
-            lastDeviceState = deviceState
-            deviceState = DeviceP2PListeningState.PAUSED
+            showPauseMenu(true)
         }
         //Resume Button
         resumeButton.setOnClickListener {
+            sendAdministrativeMessage(AdminMessage.UNPAUSE)
+
             resumeButton.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
 
-            pauseButton.isEnabled = true
-
-            pauseMenu.visibility = View.GONE
-
-            deviceState = lastDeviceState
-            lastDeviceState = DeviceP2PListeningState.UNDEFINED
+            hidePauseMenu()
         }
         //quit to menu
         quitButton.setOnClickListener {
@@ -112,19 +114,23 @@ class GameActivity : AppCompatActivity() {
 
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11) + 6
-            deviceState = DeviceP2PListeningState.SENDING
             blob.visibility = View.VISIBLE
             guideArrow.visibility = View.VISIBLE
             instructionText.text = "Pass the blob before it explodes!"
             instructionText.visibility = View.VISIBLE
 
             P2PServer.Companion.StartServerForTransferTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-
             P2PServer.Companion.MessageServerAsyncTask(WeakReference(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+
+            startListeningSocket()
+
+            deviceState = DeviceP2PListeningState.SENDING
         }
         else {
             Log.d("GameActivity", "Starting receiving socket on client for first turn from server.")
-            P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this)).execute(serverAddress)
+
+            startListeningSocket()
+
             deviceState = DeviceP2PListeningState.RECEIVING
         }
 
@@ -160,7 +166,7 @@ class GameActivity : AppCompatActivity() {
                         P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
                         deviceState = DeviceP2PListeningState.RECEIVING
-                        P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
+                        P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
                     }
                     else {
                         P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
@@ -256,4 +262,47 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    fun showPauseMenu(deviceInitiatedPause: Boolean) {
+        resumeButton.isEnabled = deviceInitiatedPause
+
+        pauseButton.isEnabled = false
+        pauseMenu.visibility = View.VISIBLE
+
+        lastDeviceState = deviceState
+        deviceState = DeviceP2PListeningState.PAUSED
+
+        startListeningSocket()
+    }
+
+    fun hidePauseMenu() {
+        pauseButton.isEnabled = true
+
+        pauseMenu.visibility = View.GONE
+
+        deviceState = lastDeviceState
+        lastDeviceState = DeviceP2PListeningState.UNDEFINED
+
+        startListeningSocket()
+    }
+
+    fun sendAdministrativeMessage(message: Int) {
+        if (deviceIsOwner!!) {
+            P2PServer.Companion.StartServerForTransferTask().execute()
+            P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, message)
+        }
+        else {
+            P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, message)
+        }
+    }
+
+    fun startListeningSocket() {
+        if (deviceIsOwner!!) {
+            Log.d(TAG, "LISTENING SOCKET STARTED ON SERVER")
+            P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+        }
+        else {
+            Log.d(TAG, "LISTENING SOCKET STARTED ON CLIENT")
+            P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
+        }
+    }
 }
