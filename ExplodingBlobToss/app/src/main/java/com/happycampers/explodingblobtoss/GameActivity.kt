@@ -50,7 +50,7 @@ class GameActivity : AppCompatActivity() {
 
         val pauseButton = findViewById<ImageView>(R.id.pause_btn)
         val pauseMenu = findViewById<FrameLayout>(R.id.pause_menu)
-        val resumeButton = findViewById<Button>(R.id.resume_button)
+        val resumeButton = findViewById<View>(R.id.resume_button)
         val quitButton = findViewById<Button>(R.id.quit_button)
 
         guideArrow = findViewById<ImageView>(R.id.front_arrow)
@@ -124,14 +124,19 @@ class GameActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-            checkShakeDetectorSupported()
+        checkShakeDetectorSupported()
+    }
 
+    override fun onResume() {
         val intent = getIntent()
         deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
 
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11) + 6
+
+            Log.d(TAG, "THERE WILL BE $turnsLeft TURNS")
+
             deviceState = DeviceP2PListeningState.SENDING
             blob.visibility = View.VISIBLE
             guideArrow.visibility = View.VISIBLE
@@ -152,16 +157,6 @@ class GameActivity : AppCompatActivity() {
             Log.e("GameActivity", "Could not obtain server address from intent.")
         }
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        findViewById<TextView>(R.id.round_count_lbl).text = "Round: $roundNumber"
-        findViewById<TextView>(R.id.score_lbl).text = "Score: $score"
-    }
-
-    override fun onResume() {
         super.onResume()
 
         findViewById<TextView>(R.id.round_count_lbl).text = "Round: $roundNumber"
