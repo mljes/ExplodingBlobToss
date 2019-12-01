@@ -47,8 +47,6 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
     private var task: P2PServer.Companion.StartServerForTransferTask? = null
 
-    lateinit var connectButton: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peer_setup)

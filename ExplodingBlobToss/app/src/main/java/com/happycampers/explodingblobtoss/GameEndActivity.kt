@@ -26,18 +26,16 @@ class GameEndActivity : AppCompatActivity() {
 
         val roundStatusTextView = findViewById<TextView>(R.id.round_result_title)
         roundStatusTextView.text = gameText
-        /*
+
         if (isWinner) {
-            roundStatusTextView.text = "You won!"
             Splat_ImageView.visibility = View.INVISIBLE
 
         }
         else {
-            roundStatusTextView.text = "You lost."
             Splat_ImageView.visibility = View.VISIBLE
 
         }
-        */
+
 
         //next round button
         findViewById<Button>(R.id.next_round_btn).setOnClickListener {
@@ -66,7 +64,9 @@ class GameEndActivity : AppCompatActivity() {
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
-            onDestroy()
+
+            val intent = Intent(this@GameEndActivity, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 

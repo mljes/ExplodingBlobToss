@@ -21,7 +21,7 @@ class ShakeDetector(val context: Context) {
     /**
      * Accuracy configuration
      */
-    private var threshold = 10.0f
+    private var threshold = 9.5f
     private var interval = 100
 
     private var sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
