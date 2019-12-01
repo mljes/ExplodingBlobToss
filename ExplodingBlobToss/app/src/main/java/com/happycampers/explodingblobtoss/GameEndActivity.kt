@@ -68,6 +68,9 @@ class GameEndActivity : AppCompatActivity() {
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
 
+            GameActivity.roundNumber = 1
+            GameActivity.score = 0
+
             val intent = Intent(this@GameEndActivity, MainActivity::class.java)
             startActivity(intent)
         }
