@@ -32,6 +32,9 @@ class GameActivity : AppCompatActivity() {
     private lateinit var throwSplat:MediaPlayer
     private lateinit var audioSwitch:Switch
     private lateinit var hapticSwitch: Switch
+
+    private var lastDeviceState = DeviceP2PListeningState.UNDEFINED
+
     companion object {
         var deviceState: DeviceP2PListeningState = DeviceP2PListeningState.UNDEFINED
         var turnsLeft: Int = -1
@@ -67,8 +70,13 @@ class GameActivity : AppCompatActivity() {
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
+
+            pauseButton.isEnabled = false
+
             pauseMenu.visibility = View.VISIBLE
-            onPause()
+
+            lastDeviceState = deviceState
+            deviceState = DeviceP2PListeningState.PAUSED
         }
         //Resume Button
         resumeButton.setOnClickListener {
@@ -76,8 +84,13 @@ class GameActivity : AppCompatActivity() {
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
-            pauseMenu.visibility = View.GONE;
-            onResume()
+
+            pauseButton.isEnabled = true
+
+            pauseMenu.visibility = View.GONE
+
+            deviceState = lastDeviceState
+            lastDeviceState = DeviceP2PListeningState.UNDEFINED
         }
         //quit to menu
         quitButton.setOnClickListener {
@@ -91,7 +104,7 @@ class GameActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-            checkShakeDetectorSupported()
+        checkShakeDetectorSupported()
 
         val intent = getIntent()
         deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
