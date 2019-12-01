@@ -2,6 +2,7 @@ package com.happycampers.explodingblobtoss
 
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -27,8 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         startButton.setOnClickListener {
             startButton.performHapticFeedback(VIRTUAL_KEY,FLAG_IGNORE_GLOBAL_SETTING)
-            val intent = Intent(this, WifiPeerSetupActivity::class.java).apply {
-                //?
+                val intent = Intent(this, WifiPeerSetupActivity::class.java).apply {
             }
             startActivity(intent)
         }
@@ -42,5 +42,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-

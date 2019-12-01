@@ -13,11 +13,13 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
+import kotlinx.android.synthetic.main.activity_game.*
+import java.lang.NullPointerException
 import java.lang.ref.WeakReference
 import java.net.InetAddress
 import java.util.*
 
-//sound clip attribution: from freesound.com FoolBoy Media, and Adam_N
+//sound clip attribution: from freesound.org FoolBoy Media(gameOver_splat), Green couch (throw_Splash)
 class GameActivity : AppCompatActivity() {
     private lateinit var shakeDetector: ShakeDetector
     private var accelerometerSupported = false
@@ -51,7 +53,9 @@ class GameActivity : AppCompatActivity() {
         throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
         gameOverSplat = MediaPlayer.create(this,R.raw.game_over_splat)
+        gameOverSplat.setVolume(0.1f,0.1f)
         throwSplat = MediaPlayer.create(this,R.raw.throw_splash)
+        throwSplat.setVolume(0.1f,0.1f)
         blob = findViewById(R.id.blob_ImageView)
         instructionText = findViewById(R.id.instructions)
         shakeDetector = ShakeDetector(this)
@@ -221,7 +225,7 @@ class GameActivity : AppCompatActivity() {
             throwSplat.start()
         }
         if(hapticSwitch.isChecked){
-            vibratePhone()
+            vibratePhone(100)
         }
         blob.visibility = View.VISIBLE
         blob.startAnimation(catchAnimation)
@@ -235,6 +239,7 @@ class GameActivity : AppCompatActivity() {
             if(audioSwitch.isChecked){
                 gameOverSplat.start()
             }
+            blob_ImageView.setImageResource(R.drawable.ic_bluesplat)
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(false)
         }
@@ -245,12 +250,12 @@ class GameActivity : AppCompatActivity() {
 
     }
 
-    fun vibratePhone() {
+    fun vibratePhone(length:Long) {
         val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator.vibrate(VibrationEffect.createOneShot(length, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
-            vibrator.vibrate(200)
+            vibrator.vibrate(length)
         }
     }
 
