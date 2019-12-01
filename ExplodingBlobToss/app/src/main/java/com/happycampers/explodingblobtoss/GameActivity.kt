@@ -15,12 +15,13 @@ import android.widget.*
 import com.example.android.diceroller.ShakeDetector
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
+import kotlinx.android.synthetic.main.activity_game.*
 import java.lang.NullPointerException
 import java.lang.ref.WeakReference
 import java.net.InetAddress
 import java.util.*
 
-//sound clip attribution: from freesound.com FoolBoy Media, and Adam_N
+//sound clip attribution: from freesound.org FoolBoy Media(gameOver_splat), Green couch (throw_Splash)
 class GameActivity : AppCompatActivity() {
     private lateinit var shakeDetector: ShakeDetector
     private var accelerometerSupported = false
@@ -226,6 +227,7 @@ class GameActivity : AppCompatActivity() {
             if(audioSwitch.isChecked){
                 gameOverSplat.start()
             }
+            blob_ImageView.setImageResource(R.drawable.ic_bluesplat)
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(false)
         }

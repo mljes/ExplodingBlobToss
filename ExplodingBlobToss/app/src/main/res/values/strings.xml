@@ -27,7 +27,7 @@
     <string name="connect_peers_title">Connect To Peers</string>
     <string name="detected_devices_text">Detected Devices:</string>
     <!--Main Game Activity-->
-    <string name="instructions_title">Pass the blob before it explodes!</string>
+    <string name="instructions_title">Catch the blob from your opponent!</string>
     <string name="round_count_lbl">Round: %d </string>
     <string name="score_lbl">Score: %d</string>
     <string name="quit_btn">Quit to Menu</string>

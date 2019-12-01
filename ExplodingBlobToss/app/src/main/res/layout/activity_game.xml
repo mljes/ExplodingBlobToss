@@ -73,7 +73,7 @@
             android:layout_marginBottom="20dp"
             android:text="@string/instructions_title"
             android:textColor="@color/myWhite"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/round_count_lbl"
