@@ -41,10 +41,11 @@ class P2PServer {
 
             private fun receiveData(): Boolean {
                 try {
-                    if (serverSocket == null) {
+                    serverSocket ?: run {
                         serverSocket = ServerSocket(8997)
                     }
 
+                    serverSocket?.reuseAddress
                     clientSocket = serverSocket?.accept()
 
 
@@ -81,7 +82,7 @@ class P2PServer {
                     return true
                 } catch (e: Exception) {
                     Log.d(TAG, "Could not receive data: " + e.message)
-                    return false
+                   return false
                 }
             }
 
@@ -117,6 +118,8 @@ class P2PServer {
                         transferServerSocket = ServerSocket(8993)
                     }
 
+
+                    transferServerSocket?.reuseAddress
                     transferClientSocket = transferServerSocket?.accept()
 
                     return true

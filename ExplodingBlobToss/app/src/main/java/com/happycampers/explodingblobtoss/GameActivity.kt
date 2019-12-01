@@ -26,6 +26,7 @@ class GameActivity : AppCompatActivity() {
     private var accelerometerSupported = false
     private var deviceIsOwner: Boolean? = null
     private var serverAddress: InetAddress? = null
+
     companion object {
         var deviceState: DeviceP2PListeningState = DeviceP2PListeningState.UNDEFINED
         var turnsLeft: Int = -1
@@ -33,8 +34,8 @@ class GameActivity : AppCompatActivity() {
         lateinit var  catchAnimation:Animation
         lateinit var blob:ImageView
 
-
-
+        var score: Int = 0
+        var roundNumber: Int = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,11 +49,9 @@ class GameActivity : AppCompatActivity() {
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
         blob = findViewById(R.id.blob_ImageView)
 
-
-
         shakeDetector = ShakeDetector(this)
 
-//Pause Button
+        //Pause Button
         pauseButton.setOnClickListener {
             pauseButton.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
@@ -61,7 +60,7 @@ class GameActivity : AppCompatActivity() {
             pauseMenu.visibility = View.VISIBLE
             onPause()
         }
-//Resume Button
+        //Resume Button
         resumeButton.setOnClickListener {
             resumeButton.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
@@ -70,7 +69,7 @@ class GameActivity : AppCompatActivity() {
             pauseMenu.visibility = View.GONE;
             onResume()
         }
-//quit to menu
+        //quit to menu
         quitButton.setOnClickListener {
             quitButton.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
@@ -89,11 +88,9 @@ class GameActivity : AppCompatActivity() {
         serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
 
         if (deviceIsOwner!!) {
-            turnsLeft = Random().nextInt(11 + 5)
+            turnsLeft = Random().nextInt(11) + 6
             deviceState = DeviceP2PListeningState.SENDING
             blob.visibility = View.VISIBLE
-
-
 
             P2PServer.Companion.StartServerForTransferTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 
@@ -113,8 +110,18 @@ class GameActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        findViewById<TextView>(R.id.round_count_lbl).text = "Round: $roundNumber"
+        findViewById<TextView>(R.id.score_lbl).text = "Score: $score"
+    }
+
     override fun onResume() {
         super.onResume()
+
+        findViewById<TextView>(R.id.round_count_lbl).text = "Round: $roundNumber"
+        findViewById<TextView>(R.id.score_lbl).text = "Score: $score"
 
         checkShakeDetectorSupported()
 
@@ -174,6 +181,9 @@ class GameActivity : AppCompatActivity() {
         blob.visibility = View.INVISIBLE
 
         if (turnsLeft == 0) {
+            score++
+            roundNumber++
+
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(true)
         }
@@ -188,12 +198,13 @@ class GameActivity : AppCompatActivity() {
         val turnCountFromServer = result!!.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
         if (0 == turnCountFromServer) {
+            roundNumber++
+
             deviceState = DeviceP2PListeningState.FINISHED
 
             startGameEndActivity(false)
         }
         else {
-
             deviceState = DeviceP2PListeningState.SENDING
             turnsLeft = (turnCountFromServer - 1)
         }
