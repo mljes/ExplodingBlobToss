@@ -273,7 +273,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
     override fun onConnectionInfoAvailable(info: WifiP2pInfo?) {
         this.info = info
-
+Log.i("SAMError", "Happened")
         info ?: return
 
         if (info.groupFormed && info.isGroupOwner) {

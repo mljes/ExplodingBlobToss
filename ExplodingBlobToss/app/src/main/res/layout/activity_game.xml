@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/myBlack"
     tools:context=".GameActivity">
-
+    <!--Icons made by "https://www.flaticon.com/authors/google" -->
     <TextView
         android:id="@+id/accelerometer_unsupported_warning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your device does not support accelerometer use. Gameplay requires use of accelerometer."
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,8 +22,204 @@
         android:id="@+id/gameplayMessageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <ImageView
+        android:id="@+id/front_arrow"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:rotation="90"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/relativelayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.060000002"
+        app:srcCompat="@drawable/ic_arrow" />
+
+    <RelativeLayout
+        android:id="@+id/relativelayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:showIn="@layout/main_menu">
+
+
+        <ImageView
+            android:id="@+id/blob_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            android:fadeScrollbars="false"
+            android:scaleType="centerInside"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_blob" />
+
+        <TextView
+            android:id="@+id/instructions"
+            style="@style/title_text"
+            android:layout_alignBottom="@id/blob_ImageView"
+            android:layout_marginTop="20dp"
+            android:text="@string/instructions_title"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/myWhite" />
+
+        <TextView
+            android:id="@+id/round_count_lbl"
+            style="@style/title_text"
+            android:layout_alignRight="@id/blob_ImageView"
+            android:layout_alignBottom="@id/blob_ImageView"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="40dp"
+            android:text="@string/round_count_lbl"
+            android:textAlignment="viewStart"
+            android:textColor="@color/myWhite" />
+
+        <TextView
+            android:id="@+id/score_lbl"
+            style="@style/title_text"
+            android:layout_alignStart="@id/blob_ImageView"
+            android:layout_alignBottom="@id/blob_ImageView"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/score_lbl"
+            android:textAlignment="viewStart"
+            android:textColor="@color/myWhite" />
+
+        <ImageView
+            android:id="@+id/pause_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:srcCompat="@drawable/ic_rounded_pause_button" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/pause_menu"
+        style="@style/button_style"
+        android:layout_width="400dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="150dp"
+        android:layout_marginBottom="32dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/pause_menu_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Paused"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/title_text"
+                android:textColor="@color/myWhite"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/colorAccentDark"
+                android:gravity="center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pause_menu_title" />
+
+            <Button
+                android:id="@+id/quit_button"
+                style="@style/button_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="100dp"
+                android:background="@drawable/accent_button"
+                android:text="Quit to Menu"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/resume_button" />
+
+            <Button
+                android:id="@+id/resume_button"
+                style="@style/button_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="100dp"
+                android:background="@drawable/accent_button"
+                android:text="Resume"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/haptic_switch" />
+
+            <Switch
+                android:id="@+id/audio_switch"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="120dp"
+                android:checked="true"
+                android:showText="false"
+                android:switchTextAppearance="@style/Normal_text"
+                android:text="Sound Effects   "
+                android:textAlignment="viewEnd"
+                android:textColor="@color/myWhite"
+                android:trackTint="#000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.76"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
+
+            <Switch
+                android:id="@+id/haptic_switch"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="120dp"
+                android:checked="true"
+                android:showText="false"
+                android:switchTextAppearance="@style/Normal_text"
+                android:text="Vibrate   "
+                android:textAlignment="textEnd"
+                android:textColor="@color/myWhite"
+                android:trackTint="#000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/audio_switch" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

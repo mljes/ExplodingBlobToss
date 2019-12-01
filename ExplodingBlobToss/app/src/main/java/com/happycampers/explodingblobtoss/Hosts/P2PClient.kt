@@ -1,10 +1,18 @@
 package com.happycampers.explodingblobtoss.Hosts
 
+import android.animation.ObjectAnimator
 import android.os.AsyncTask
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import com.happycampers.explodingblobtoss.DeviceP2PListeningState
 import com.happycampers.explodingblobtoss.GameActivity
+import com.happycampers.explodingblobtoss.GameActivity.Companion.blob
+import com.happycampers.explodingblobtoss.GameActivity.Companion.catchAnimation
+import com.happycampers.explodingblobtoss.GameActivity.Companion.catchBlob
+import com.happycampers.explodingblobtoss.GameActivity.Companion.throwAnimation
+import com.happycampers.explodingblobtoss.GameActivity.Companion.throwBlob
 import com.happycampers.explodingblobtoss.R
 import kotlinx.android.synthetic.main.activity_game.view.*
 import java.io.ByteArrayOutputStream
@@ -20,6 +28,7 @@ class P2PClient {
             private var socket: Socket? = null
 
             override fun onPreExecute() {
+
                 if (GameActivity.deviceState == DeviceP2PListeningState.SENDING) {
                     GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
                 }
@@ -69,8 +78,7 @@ class P2PClient {
             }
 
             override fun onPostExecute(result: Void?) {
-                GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-                GameActivity.turnsLeft--
+                throwBlob()
             }
         }
 
@@ -158,10 +166,8 @@ class P2PClient {
                 println("IN POST EXECUTE CLIENT RECEIVE")
                 if (result != null && result.isNotEmpty()) {
                     println("GOT A MESSAGE ON THE CLIENT")
-                    activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
+                   catchBlob(result)
 
-                    GameActivity.deviceState = DeviceP2PListeningState.SENDING
-                    GameActivity.turnsLeft = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
                 }
             }
         }
