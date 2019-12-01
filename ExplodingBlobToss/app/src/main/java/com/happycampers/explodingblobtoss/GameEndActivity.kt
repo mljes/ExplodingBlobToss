@@ -18,8 +18,15 @@ class GameEndActivity : AppCompatActivity() {
         val isWinner = intent.getBooleanExtra("IS_WINNER", false)
         val serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
         val deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
-        val roundStatusTextView = findViewById<TextView>(R.id.round_result_title)
+        var gameText = intent.getStringExtra("END_REASON")
 
+        gameText ?: run {
+            gameText = "Hmmm..."
+        }
+
+        val roundStatusTextView = findViewById<TextView>(R.id.round_result_title)
+        roundStatusTextView.text = gameText
+        /*
         if (isWinner) {
             roundStatusTextView.text = "You won!"
             Splat_ImageView.visibility = View.INVISIBLE
@@ -30,6 +37,8 @@ class GameEndActivity : AppCompatActivity() {
             Splat_ImageView.visibility = View.VISIBLE
 
         }
+        */
+
         //next round button
         findViewById<Button>(R.id.next_round_btn).setOnClickListener {
             next_round_btn.performHapticFeedback(

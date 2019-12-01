@@ -21,6 +21,8 @@ import java.util.*
 
 //sound clip attribution: from freesound.org FoolBoy Media(gameOver_splat), Green couch (throw_Splash)
 class GameActivity : AppCompatActivity() {
+    private val TAG = "GAMEACTIVITY"
+
     private lateinit var shakeDetector: ShakeDetector
     private var accelerometerSupported = false
     private var deviceIsOwner: Boolean? = null
@@ -45,13 +47,14 @@ class GameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
         val pauseButton = findViewById<ImageView>(R.id.pause_btn)
         val pauseMenu = findViewById<FrameLayout>(R.id.pause_menu)
         val resumeButton = findViewById<Button>(R.id.resume_button)
         val quitButton = findViewById<Button>(R.id.quit_button)
+
         guideArrow = findViewById<ImageView>(R.id.front_arrow)
-        throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
-        catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
+
         gameOverSplat = MediaPlayer.create(this,R.raw.game_over_splat)
         gameOverSplat.setVolume(0.1f,0.1f)
         throwSplat = MediaPlayer.create(this,R.raw.throw_splash)
@@ -61,6 +64,27 @@ class GameActivity : AppCompatActivity() {
         shakeDetector = ShakeDetector(this)
         audioSwitch = findViewById(R.id.audio_switch)
         hapticSwitch = findViewById(R.id.haptic_switch)
+
+        throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
+        catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
+
+        catchAnimation.setAnimationListener(object: Animation.AnimationListener {
+            //TODO: might want own animation listener object class
+            override fun onAnimationEnd(p0: Animation?) {
+                if (deviceState == DeviceP2PListeningState.TURN_PROCESSING) {
+                    deviceState = DeviceP2PListeningState.FINISHED
+                    startGameEndActivity(false, "You dropped the blob!")
+                }
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+                Log.d(TAG, "In onAnimationStart.")
+            }
+        })
 
         //Pause Button
         pauseButton.setOnClickListener {
@@ -140,9 +164,27 @@ class GameActivity : AppCompatActivity() {
         shakeDetector.startListening(object: ShakeDetector.ShakeListener {
             override fun onShake(force: Float, x: Float, y: Float, z: Float) {
                 Log.d("GameActivity", "THIS IS THE DEVICE STATE: " + deviceState.toString())
+
                 if (deviceState == DeviceP2PListeningState.SENDING) {
 
-                    if (x < 0) { //shook in wrong direction for throw
+                    if (deviceIsOwner!!) {
+                        P2PServer.Companion.StartServerForTransferTask().execute()
+                        P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+
+                        deviceState = DeviceP2PListeningState.RECEIVING
+                        P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
+                    }
+                    else {
+                        P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
+
+                        deviceState = DeviceP2PListeningState.RECEIVING
+                        P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
+                    }
+
+                }
+
+                else if (deviceState == DeviceP2PListeningState.TURN_PROCESSING) {
+                    if (x < 0) {
                         deviceState = DeviceP2PListeningState.FINISHED
 
                         if (deviceIsOwner!!) {
@@ -153,23 +195,15 @@ class GameActivity : AppCompatActivity() {
                             P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(-2)
                         }
 
-                        startGameEndActivity(false)
+                        startGameEndActivity(false, "You dropped the blob!")
                     }
-                    else { //shook in correct direction for throw
-                        if (deviceIsOwner!!) {
-                            P2PServer.Companion.StartServerForTransferTask().execute()
-                            P2PServer.Companion.ServerMessageTransferTask(serverAddress!!,WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, turnsLeft)//execute(turnsLeft) //OnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-
-                            deviceState = DeviceP2PListeningState.RECEIVING
-                            P2PServer.Companion.MessageServerAsyncTask(WeakReference(this@GameActivity)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR) //TODO: see if this is safe. Want to let send finish first
-                        }
-                        else {
-                            P2PClient.Companion.ClientMessageTransferTask(serverAddress!!, WeakReference(this@GameActivity)).execute(turnsLeft) //(AsyncTask.THREAD_POOL_EXECUTOR)
-
-                            deviceState = DeviceP2PListeningState.RECEIVING
-                            P2PClient.Companion.ClientMessageReceiveTask(WeakReference(this@GameActivity)).execute(serverAddress)
-                        }
+                    else {
+                        catchAnimation.cancel()
+                        blob.clearAnimation()
+                        deviceState = DeviceP2PListeningState.SENDING
                     }
+
+                    println("THIS IS THE DEVICE STATE (2): " + deviceState)
                 }
             }
         })
@@ -192,11 +226,12 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    fun startGameEndActivity(isWinner: Boolean) {
+    fun startGameEndActivity(isWinner: Boolean, endReason: String) {
         val intent = Intent(this@GameActivity, GameEndActivity::class.java).apply {
             this.putExtra("IS_OWNER", deviceIsOwner)
             this.putExtra("IS_WINNER", isWinner)
             this.putExtra("SERVER_ADDRESS", serverAddress)
+            this.putExtra("END_REASON", endReason)
         }
 
         startActivity(intent)
@@ -213,41 +248,40 @@ class GameActivity : AppCompatActivity() {
             roundNumber++
 
             deviceState = DeviceP2PListeningState.FINISHED
-            startGameEndActivity(true)
+            startGameEndActivity(true, "You win!")
         }
         else {
             deviceState = DeviceP2PListeningState.RECEIVING
         }
     }
 
-    fun catchBlob(result:String?){
+    fun catchBlob(turnCount: Int){
         if(audioSwitch.isChecked){
             throwSplat.start()
         }
         if(hapticSwitch.isChecked){
             vibratePhone(100)
         }
+
         blob.visibility = View.VISIBLE
         blob.startAnimation(catchAnimation)
         guideArrow.visibility = View.VISIBLE
         instructionText.text = "Pass the blob before it explodes!"
         instructionText.visibility = View.VISIBLE
-        val turnCountFromServer = result!!.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
-        if (0 == turnCountFromServer) {
+        if (0 == turnCount) {
             roundNumber++
             if(audioSwitch.isChecked){
                 gameOverSplat.start()
             }
             blob_ImageView.setImageResource(R.drawable.ic_bluesplat)
             deviceState = DeviceP2PListeningState.FINISHED
-            startGameEndActivity(false)
+            startGameEndActivity(false, "The blob exploded!\nYou lose!")
         }
         else {
-            deviceState = DeviceP2PListeningState.SENDING
-            turnsLeft = (turnCountFromServer - 1)
+            deviceState = DeviceP2PListeningState.TURN_PROCESSING
+            turnsLeft = (turnCount - 1)
         }
-
     }
 
     fun vibratePhone(length:Long) {

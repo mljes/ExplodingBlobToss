@@ -160,10 +160,10 @@ class P2PClient {
                     val messageCode = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
                     if (messageCode == -2) {
-                        activity.get()!!.startGameEndActivity(true)
+                        activity.get()!!.startGameEndActivity(true, "You win!")
                     }
                     else {
-                        activity.get()!!.catchBlob(result)
+                        activity.get()!!.catchBlob(turnCount = messageCode)
                     }
                 }
             }
