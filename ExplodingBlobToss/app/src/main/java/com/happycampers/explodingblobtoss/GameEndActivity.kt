@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import java.net.InetAddress
 import android.widget.*
@@ -19,6 +21,8 @@ class GameEndActivity : AppCompatActivity() {
         val serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
         val deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         var gameText = intent.getStringExtra("END_REASON")
+        val explodeAnimation = AnimationUtils.loadAnimation(this, R.anim.scaleup_fadeout)
+
 
         gameText ?: run {
             gameText = "Hmmm..."
@@ -31,11 +35,14 @@ class GameEndActivity : AppCompatActivity() {
 
         if (isWinner) {
             Splat_ImageView.visibility = View.INVISIBLE
+            Splat_ImageView2.visibility = View.INVISIBLE
             GameActivity.score++
 
         }
         else {
             Splat_ImageView.visibility = View.VISIBLE
+            Splat_ImageView2.visibility = View.VISIBLE
+            Splat_ImageView2.startAnimation(explodeAnimation)
 
         }
 

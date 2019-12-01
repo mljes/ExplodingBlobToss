@@ -45,14 +45,14 @@
     <string name="step2_tutorial">Step 2: Press the refresh icon next to the \"Available Players\" list</string>
     <string name="step3_tutorial">Step 3: Select the player you want to play with</string>
     <string name="step4_tutorial">Step 4: Press \"Connect\"</string>
-    <string name="step5_tutorial">Step 5: The game will start after the other player accepts your request to connect</string>
+    <string name="step5_tutorial">Step 5: The game will start automatically after a connection has been established</string>
     <string name="part2_title">Throw and Catch the Blob</string>
-    <string name="part2_subtitle_tutorial">After the other player accepts the invitation to play, the game will automatically begin</string>
+    <string name="part2_subtitle_tutorial">The game will automatically begin and player 1 will have the blob first</string>
     <string name="part2_step1_tutorial">Step 1: Hold your phone in landscape mode, When the blob appears on your screen push your device forward to toss the blob</string>
     <string name="part2_step2_tutorial">Step 2: When the other player throws the blob you must catch it by thrusting your phone forward in the same motion as a throw</string>
-    <string name="part2_step3_tutorial">NOTE: you will only have a few seconds to catch the blob before it counts as a drop and you loose the game</string>
+    <string name="part2_step3_tutorial">NOTE: you will need to catch the blob before it reaches the bottom of the screen or it will count as a drop!</string>
     <string name="part3_Title">Winning the Game</string>
-    <string name="part3_subtitle">You win the game if your opponent fails to catch the blob or if the blob explodes after our opponent catches it!</string>
+    <string name="part3_subtitle">You win the game if your opponent fails to catch the blob or if the blob explodes after your opponent catches it!</string>
     <string name="disconnect_peer_button">Disconnect</string>
     <string name="get_file_button">file</string>
     <!---->

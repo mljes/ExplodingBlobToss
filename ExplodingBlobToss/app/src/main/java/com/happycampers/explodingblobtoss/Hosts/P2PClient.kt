@@ -25,6 +25,8 @@ class P2PClient {
             private val TAG = "P2PClient.TRANSFER"
             private var socket: Socket? = null
 
+
+
             override fun doInBackground(vararg turnsLeft: Int?): Void? {
                 sendData(address, turnsLeft[0]!!)
                 return null

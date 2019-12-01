@@ -25,6 +25,14 @@ android:background="@drawable/ic_blacksplashbg3">
         android:cropToPadding="true"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/ic_bluesplat" />
+    <ImageView
+        android:id="@+id/Splat_ImageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_bluesplat" />
 
     <TextView
         android:id="@+id/round_result_title"

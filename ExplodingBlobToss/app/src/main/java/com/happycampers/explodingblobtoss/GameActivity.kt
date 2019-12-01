@@ -94,6 +94,7 @@ class GameActivity : AppCompatActivity() {
             }
         })
 
+
         //Pause Button
         pauseButton.setOnClickListener {
             pauseButton.performHapticFeedback(
@@ -245,7 +246,9 @@ class GameActivity : AppCompatActivity() {
         blob.startAnimation(throwAnimation)
         blob.visibility = View.INVISIBLE
         instructionText.text = "Catch the blob from your opponent!"
-
+        if(audioSwitch.isChecked){
+            throwSplat.start()
+        }
         if (turnsLeft == 0) {
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(true, "You win!")
@@ -274,7 +277,6 @@ class GameActivity : AppCompatActivity() {
             if(audioSwitch.isChecked){
                 gameOverSplat.start()
             }
-            blob_ImageView.setImageResource(R.drawable.ic_bluesplat)
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(false, "The blob exploded!\nYou lose!")
         }
