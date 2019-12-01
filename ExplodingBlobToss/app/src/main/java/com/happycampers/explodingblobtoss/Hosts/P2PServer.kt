@@ -65,7 +65,6 @@ class P2PServer {
 
                     val messageString = outputStream.toString()
 
-
                     println(
                         "MESSAGE FROM CLIENT: " + messageString
                     )

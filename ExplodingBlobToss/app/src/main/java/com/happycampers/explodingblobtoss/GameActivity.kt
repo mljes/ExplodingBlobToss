@@ -1,20 +1,17 @@
 package com.happycampers.explodingblobtoss
 
+import android.content.Context
 import android.content.Intent
 import android.media.Image
 import android.media.MediaPlayer
-import android.os.AsyncTask
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.example.android.diceroller.ShakeDetector
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
@@ -33,6 +30,8 @@ class GameActivity : AppCompatActivity() {
     private lateinit var instructionText:TextView
     private lateinit var gameOverSplat:MediaPlayer
     private lateinit var throwSplat:MediaPlayer
+    private lateinit var audioSwitch:Switch
+    private lateinit var hapticSwitch: Switch
     companion object {
         var deviceState: DeviceP2PListeningState = DeviceP2PListeningState.UNDEFINED
         var turnsLeft: Int = -1
@@ -59,6 +58,8 @@ class GameActivity : AppCompatActivity() {
         blob = findViewById(R.id.blob_ImageView)
         instructionText = findViewById(R.id.instructions)
         shakeDetector = ShakeDetector(this)
+        audioSwitch = findViewById(R.id.audio_switch)
+        hapticSwitch = findViewById(R.id.haptic_switch)
 
         //Pause Button
         pauseButton.setOnClickListener {
@@ -205,7 +206,12 @@ class GameActivity : AppCompatActivity() {
     }
 
     fun catchBlob(result:String?){
-        throwSplat.start()
+        if(audioSwitch.isChecked){
+            throwSplat.start()
+        }
+        if(hapticSwitch.isChecked){
+            vibratePhone()
+        }
         blob.visibility = View.VISIBLE
         blob.startAnimation(catchAnimation)
         guideArrow.visibility = View.VISIBLE
@@ -215,8 +221,9 @@ class GameActivity : AppCompatActivity() {
 
         if (0 == turnCountFromServer) {
             roundNumber++
-
-            gameOverSplat.start()
+            if(audioSwitch.isChecked){
+                gameOverSplat.start()
+            }
             deviceState = DeviceP2PListeningState.FINISHED
             startGameEndActivity(false)
         }
@@ -225,6 +232,15 @@ class GameActivity : AppCompatActivity() {
             turnsLeft = (turnCountFromServer - 1)
         }
 
+    }
+
+    fun vibratePhone() {
+        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(200)
+        }
     }
 
 }
