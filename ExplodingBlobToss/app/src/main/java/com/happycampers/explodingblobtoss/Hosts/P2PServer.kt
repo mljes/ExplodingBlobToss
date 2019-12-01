@@ -8,9 +8,7 @@ import com.happycampers.explodingblobtoss.DeviceP2PListeningState
 import com.happycampers.explodingblobtoss.GameActivity
 import com.happycampers.explodingblobtoss.GameActivity.Companion.blob
 import com.happycampers.explodingblobtoss.GameActivity.Companion.catchAnimation
-import com.happycampers.explodingblobtoss.GameActivity.Companion.catchBlob
 import com.happycampers.explodingblobtoss.GameActivity.Companion.throwAnimation
-import com.happycampers.explodingblobtoss.GameActivity.Companion.throwBlob
 import com.happycampers.explodingblobtoss.R
 import kotlinx.android.synthetic.main.activity_game.view.*
 import java.io.ByteArrayOutputStream
@@ -91,7 +89,11 @@ class P2PServer {
                 println("IN POST EXECUTE (SERVER RECIEVE)")
                 if (result != null && result.isNotEmpty()) {
                     println("GOT MESSAGE ON SERVER")
-                    throwBlob()
+                    activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
+                    blob.visibility = View.VISIBLE
+                    blob.startAnimation(catchAnimation)
+                    GameActivity.turnsLeft--
+                    GameActivity.deviceState = DeviceP2PListeningState.SENDING
                 }
             }
         }
@@ -185,8 +187,10 @@ class P2PServer {
                 }
             }
 
-            override fun onPostExecute(result: String?) {
-                catchBlob(result)
+            override fun onPostExecute(result: Void?) {
+                blob.startAnimation(throwAnimation)
+                blob.visibility = View.INVISIBLE
+                GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
 
             }
         }
