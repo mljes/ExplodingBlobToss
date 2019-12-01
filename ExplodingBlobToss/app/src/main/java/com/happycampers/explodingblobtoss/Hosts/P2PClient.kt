@@ -15,7 +15,7 @@ import java.net.*
 
 class P2PClient {
     companion object {
-        class ClientMessageTransferTask(val address: InetAddress) : AsyncTask<Int, Void?, Void>() {
+        class ClientMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>) : AsyncTask<Int, Void?, Void>() {
             private val TAG = "P2PClient.TRANSFER"
             private var socket: Socket? = null
 
@@ -69,8 +69,14 @@ class P2PClient {
             }
 
             override fun onPostExecute(result: Void?) {
-                GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-                GameActivity.turnsLeft--
+                if (GameActivity.turnsLeft == 0) {
+                    GameActivity.deviceState = DeviceP2PListeningState.FINISHED
+                    activity.get()!!.startGameEndActivity(true)
+                }
+                else {
+                    GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
+                }
+
             }
         }
 
@@ -158,10 +164,21 @@ class P2PClient {
                 println("IN POST EXECUTE CLIENT RECEIVE")
                 if (result != null && result.isNotEmpty()) {
                     println("GOT A MESSAGE ON THE CLIENT")
-                    activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
 
-                    GameActivity.deviceState = DeviceP2PListeningState.SENDING
-                    GameActivity.turnsLeft = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
+                    val turnCountFromServer = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
+
+                    if (0 == turnCountFromServer) {
+                        GameActivity.deviceState = DeviceP2PListeningState.FINISHED
+
+                        activity.get()!!.startGameEndActivity(false)
+                    }
+                    else {
+                        activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text =
+                            result
+
+                        GameActivity.deviceState = DeviceP2PListeningState.SENDING
+                        GameActivity.turnsLeft = (turnCountFromServer - 1)
+                    }
                 }
             }
         }

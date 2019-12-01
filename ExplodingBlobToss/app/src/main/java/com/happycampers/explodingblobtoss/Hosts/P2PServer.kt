@@ -85,10 +85,21 @@ class P2PServer {
                 println("IN POST EXECUTE (SERVER RECIEVE)")
                 if (result != null && result.isNotEmpty()) {
                     println("GOT MESSAGE ON SERVER")
-                    activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
 
-                    GameActivity.turnsLeft--
-                    GameActivity.deviceState = DeviceP2PListeningState.SENDING
+                    val turnCountFromClient = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
+
+                    if (0 == turnCountFromClient) {
+                        GameActivity.deviceState = DeviceP2PListeningState.FINISHED
+
+                        activity.get()!!.startGameEndActivity(false)
+                    }
+
+                    else {
+                        activity.get()!!.findViewById<TextView>(R.id.gameplayMessageTextView).text = result
+
+                        GameActivity.turnsLeft = (turnCountFromClient - 1)
+                        GameActivity.deviceState = DeviceP2PListeningState.SENDING
+                    }
                 }
             }
         }
@@ -127,17 +138,7 @@ class P2PServer {
 
         }
 
-        class ServerMessageTransferTask(val address: InetAddress): AsyncTask<Int, Void?, Void>() {
-           /* override fun onPreExecute() {
-                if (GameActivity.deviceState == DeviceP2PListeningState.SENDING) {
-                    GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-                }
-                else {
-                    println("CANCELLING")
-                    cancel(false) //TODO: ensure this doesn't break safe calls
-                }
-            }*/
-
+        class ServerMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>): AsyncTask<Int, Void?, Void>() {
             override fun doInBackground(vararg turnsLeft: Int?): Void? {
                 sendData(address, turnsLeft[0]!!)
                 return null
@@ -183,8 +184,13 @@ class P2PServer {
             }
 
             override fun onPostExecute(result: Void?) {
-                GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
-
+                if (GameActivity.turnsLeft == 0) {
+                    GameActivity.deviceState = DeviceP2PListeningState.FINISHED
+                    activity.get()!!.startGameEndActivity(true)
+                }
+                else {
+                    GameActivity.deviceState = DeviceP2PListeningState.RECEIVING
+                }
             }
         }
     }
