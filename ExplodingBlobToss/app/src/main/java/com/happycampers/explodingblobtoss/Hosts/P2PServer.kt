@@ -4,6 +4,7 @@ import android.os.AsyncTask
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import com.happycampers.explodingblobtoss.Common.AdminMessage
 import com.happycampers.explodingblobtoss.DeviceP2PListeningState
 import com.happycampers.explodingblobtoss.GameActivity
 import com.happycampers.explodingblobtoss.GameActivity.Companion.blob
@@ -90,7 +91,11 @@ class P2PServer {
                 if (result != null && result.isNotEmpty()) {
                     println("GOT MESSAGE ON SERVER")
 
-                    activity.get()!!.catchBlob(result)
+                    when (result.split(" ", ignoreCase = true, limit = 0)[0].toInt()) {
+                        AdminMessage.PAUSE -> activity.get()!!.showPauseMenu(false)
+                        AdminMessage.UNPAUSE -> activity.get()!!.hidePauseMenu()
+                        else -> activity.get()!!.catchBlob(result)
+                    }
                 }
             }
         }
@@ -131,13 +136,13 @@ class P2PServer {
 
         }
 
-        class ServerMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>): AsyncTask<Int, Void?, Void>() {
-            override fun doInBackground(vararg turnsLeft: Int?): Void? {
-                sendData(address, turnsLeft[0]!!)
-                return null
+        class ServerMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>): AsyncTask<Int, Void?, Int>() {
+            override fun doInBackground(vararg messageCode: Int?): Int? {
+                sendData(address, messageCode[0]!!)
+                return messageCode[0]
             }
 
-            private fun sendData(socketAddress: InetAddress, turnsLeft: Int) {
+            private fun sendData(socketAddress: InetAddress, messageCode: Int) {
                 var message = ""
 
                 try {
@@ -154,7 +159,7 @@ class P2PServer {
 
                     Log.d(TAG_TRANSFER, "AFTER OUTPUTSTREAMS")
 
-                    message = "$turnsLeft THIS IS THE SERVER'S MESSAGE"
+                    message = "$messageCode THIS IS THE SERVER'S MESSAGE"
 
                     Log.d(TAG_TRANSFER, "AFTER SETTING MESSSAGE")
 
@@ -176,8 +181,10 @@ class P2PServer {
                 }
             }
 
-            override fun onPostExecute(result: Void?) {
-                activity.get()!!.throwBlob()
+            override fun onPostExecute(messageCode: Int) {
+                if (messageCode > 0) {
+                    activity.get()!!.throwBlob()
+                }
             }
         }
     }

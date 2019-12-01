@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.happycampers.explodingblobtoss.Common.AdminMessage
 import com.happycampers.explodingblobtoss.DeviceP2PListeningState
 import com.happycampers.explodingblobtoss.GameActivity
 import com.happycampers.explodingblobtoss.GameActivity.Companion.blob
@@ -21,7 +22,7 @@ import java.net.*
 
 class P2PClient {
     companion object {
-        class ClientMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>) : AsyncTask<Int, Void?, Void>() {
+        class ClientMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>) : AsyncTask<Int, Void?, Int>() {
             private val TAG = "P2PClient.TRANSFER"
             private var socket: Socket? = null
 
@@ -35,12 +36,12 @@ class P2PClient {
                 }
             }
 
-            override fun doInBackground(vararg turnsLeft: Int?): Void? {
-                sendData(address, turnsLeft[0]!!)
-                return null
+            override fun doInBackground(vararg messageCode: Int?): Int {
+                sendData(address, messageCode[0]!!)
+                return messageCode[0]!!
             }
 
-            private fun sendData(serverAddress: InetAddress, turnsLeft: Int) {
+            private fun sendData(serverAddress: InetAddress, messageCode: Int) {
                 if (socket == null) {
                     socket = Socket()
                 }
@@ -60,7 +61,7 @@ class P2PClient {
                     var outputStream: OutputStream = socket!!.getOutputStream()
                     var byteArrayOutputStream = ByteArrayOutputStream(32)
 
-                    message = "$turnsLeft THIS IS THE CLIENT'S MESSAGE"
+                    message = "$messageCode THIS IS THE CLIENT'S MESSAGE"
 
                     byteArrayOutputStream.write(message.toByteArray())
                     byteArrayOutputStream.writeTo(outputStream)
@@ -76,9 +77,10 @@ class P2PClient {
                 }
             }
 
-            override fun onPostExecute(result: Void?) {
-                activity.get()!!.throwBlob()
-
+            override fun onPostExecute(messageCode: Int) {
+                if (messageCode > 0) {
+                    activity.get()!!.throwBlob()
+                }
             }
         }
 
@@ -167,7 +169,12 @@ class P2PClient {
                 if (result != null && result.isNotEmpty()) {
                     println("GOT A MESSAGE ON THE CLIENT")
 
-                    activity.get()!!.catchBlob(result)
+                    when (result.split(" ", ignoreCase = true, limit = 0)[0].toInt()) {
+                        AdminMessage.PAUSE -> activity.get()!!.showPauseMenu(false)
+                        AdminMessage.UNPAUSE -> activity.get()!!.hidePauseMenu()
+                        else -> activity.get()!!.catchBlob(result)
+                    }
+
                 }
             }
         }
