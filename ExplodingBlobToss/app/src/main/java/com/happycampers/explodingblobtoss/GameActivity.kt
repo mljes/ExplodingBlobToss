@@ -132,14 +132,19 @@ class GameActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-            checkShakeDetectorSupported()
+        checkShakeDetectorSupported()
+    }
 
+    override fun onResume() {
         val intent = getIntent()
         deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         serverAddress = intent.getSerializableExtra("SERVER_ADDRESS") as InetAddress
 
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11) + 6
+
+            Log.d(TAG, "THERE WILL BE $turnsLeft TURNS")
+
             deviceState = DeviceP2PListeningState.SENDING
             blob_ImageView.visibility = View.VISIBLE
             guideArrow.visibility = View.VISIBLE
@@ -160,16 +165,6 @@ class GameActivity : AppCompatActivity() {
             Log.e("GameActivity", "Could not obtain server address from intent.")
         }
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        findViewById<TextView>(R.id.round_count_lbl).text = "Round: $roundNumber"
-        findViewById<TextView>(R.id.score_lbl).text = "Score: $score"
-    }
-
-    override fun onResume() {
         super.onResume()
 
         findViewById<TextView>(R.id.round_count_lbl).text = "Round: $roundNumber"
