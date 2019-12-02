@@ -111,7 +111,7 @@ We encountered considerable difficulties with WiFi Direct throughout the develop
 
 For clarification, when a WiFi Direct network is established, it has an Owner (also called the server) and at least one client. The server device controls the network and all clients connect to the server. 
   
-It was very difficult to establish a connection between the two devices as we were not familiar with the the technology. Even after following several tutorials and reading troubleshooting pages, it took a significant amount of time to create a connection between the devices. We were eventually able to create the connections and move on to basic communication.
+It was very difficult to establish a connection between the two devices as we were not familiar with the the technology. Even after following several Google tutorials ([1], [2]) and reading troubleshooting pages ([3]), it took a significant amount of time to create a connection between the devices. We were eventually able to create the connections and move on to basic communication.
   
 Upon creating the connections, we had to try sending messages between the devices using a simple button system as a precursor to the in-game communication. This presented its own set of difficulties as WiFi Direct communications use sockets. We were not familiar with network socket programming on Android. Network socket programming requires asyncronous tasks, which created new issues for us: we now had to deal with race conditions and concurrency issues. The code for sending messages exists in the `P2PServer` and `P2PClient` classes in the Hosts package, and sampled below:  
   
@@ -144,10 +144,15 @@ enum class DeviceP2PListeningState {
 The gameplay message cycle uses these states and can be found described in the Functional Decomposition section. Upon finding success with the state model and gameplay message cycle, we attempted to create "pause game" functionality that would pause the game on both devices and allow the users to set sound and vibration settings during gameplay. We also wanted to make the "Next Round", "Restart" and "Exit to Menu" buttons on the game end menu affect both devices simulaneously. We ran into issues with this that we were unable to overcome, and therefore had to leave all of these features out of our app. The issues seemed to be yet more socket problems that we ran out of time to fix. The app therefore still contains concurrency issues in the next round, restart and exit to menu functionalities as these will only happen on the device on which each functions respective button is clicked. This can leave one user with a different view of the app than the other, which we hope users will be able to forgive.
 
 ## Functional Decomposition
+### Connection setup
+After the Main Activity, the user enters the Wifi Peer Setup activity. In the background, this activity prepares to set up Wifi Direct connections by setting up listeners and broadcast receivers. The user must refresh the list of available peers by tapping the refresh button, which causes their device to scan for available peers and make itself visible to potential peers. The activity displays available peers in a list. Users then tap on the device that they want to connect with and taps "Connect & Play" to start the game. Tapping this button rotates the screen and starts the Game Activity, sending along `deviceIsOwner` (to indicate which device is the owner) and the `serverAddress` so that it can be passed to the communications functionality during gameplay.
 
-The server always starts as the "thrower," so it begins in the `SENDING` state. Upon detecting the toss motion from the user through the accelerometer, the thrower device sends a message to the "catcher" device indicating how many turns are left and plays the throwing animation. The thrower then goes into the `RECEIVING` state. 
+### Gameplay message cycle
+In the Game Activity, the server always starts as the "thrower," so it begins in the `SENDING` state. Upon detecting the toss motion from the user through the accelerometer, the thrower device sends a message to the "catcher" device indicating how many turns are left and plays the throwing animation. The thrower then goes into the `RECEIVING` state. 
 When a device is in the `RECEIVING` state and receives a message from the thrower, it goes into the `TURN_PROCESSING` state and launches the receiving animation. While in the `TURN_PROCESSING` state, if the animation finishes before the user shakes the device again, the user "drops" the blob and loses the game. This causes the device to go into the `FINISHED` state and also sends a message to the other device which makes that device do the same. This ends the game. If the user shakes the device before the animation finishes, the device moves into the `SENDING` state and the turn cycle continues from this device.  
 
+### End of game
+Once a user drops the blob or the blob explodes, a message is sent to the other user and both devices go into the `FINISHED` state. Both devices then transition to the Game End Activity which indicates to each user whether they have won or lost. On this activity, they can select "Next Round" to go back to the Game Activity and play another round (this increments the round number for both players and increments the score for the winning user), "Restart" to go back to the Wifi Peer Setup Activity and start a new connection (the old connection is closed), or "Exit to menu" which brings them back to the Main Activity.
 
 ## High-level Organization
 <img src="images/high-level-org.png" alt="high-lvl-org"/>
@@ -177,4 +182,9 @@ In the future we would like to get Blob Toss working on a much larger multiplaye
 
 
 ## Sources
+[1] “Wi-Fi Direct (peer-to-peer or P2P) overview  :   Android Developers,” Android Developers. [Online]. Available: https://developer.android.com/guide/topics/connectivity/wifip2p. [Accessed: 02-Dec-2019].  
+   
+[2] “samples/WiFiDirectDemo/src/com/example/android/wifidirect/WiFiDirectActivity.java - platform/development - Git at Google,” Google Git. [Online]. Available: https://android.googlesource.com/platform/development/ /master/samples/WiFiDirectDemo/src/com/example/android/wifidirect/WiFiDirectActivity.java#. [Accessed: 02-Dec-2019].  
+  
+[3] “Java - Stuck when reading from inputstream,” Stack Overflow, 01-Mar-1962. [Online]. Available: https://stackoverflow.com/questions/9129381/java-stuck-when-reading-from-inputstream. [Accessed: 02-Dec-2019].
 
