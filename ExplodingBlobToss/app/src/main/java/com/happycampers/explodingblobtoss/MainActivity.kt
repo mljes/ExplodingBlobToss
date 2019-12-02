@@ -24,10 +24,9 @@ class MainActivity : AppCompatActivity() {
         start_btn.startAnimation(animation)
         tutorial_btn.startAnimation(animation)
 
-        val startButton = findViewById<Button>(R.id.start_btn)
 
-        startButton.setOnClickListener {
-            startButton.performHapticFeedback(VIRTUAL_KEY,FLAG_IGNORE_GLOBAL_SETTING)
+        start_btn.setOnClickListener {
+            start_btn.performHapticFeedback(VIRTUAL_KEY,FLAG_IGNORE_GLOBAL_SETTING)
                 val intent = Intent(this, WifiPeerSetupActivity::class.java).apply {
             }
             startActivity(intent)

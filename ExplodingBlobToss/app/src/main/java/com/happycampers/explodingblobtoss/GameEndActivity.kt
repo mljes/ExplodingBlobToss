@@ -10,7 +10,9 @@ import android.widget.TextView
 import java.net.InetAddress
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.main_menu.*
 import kotlinx.android.synthetic.main.round_end.*
+import kotlinx.android.synthetic.main.round_end.Splat_ImageView
 
 class GameEndActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,14 +24,15 @@ class GameEndActivity : AppCompatActivity() {
         val deviceIsOwner = intent.getBooleanExtra("IS_OWNER", false)
         var gameText = intent.getStringExtra("END_REASON")
         val explodeAnimation = AnimationUtils.loadAnimation(this, R.anim.scaleup_fadeout)
+        val buttonAnimation: Animation = AnimationUtils.loadAnimation(this,R.anim.bounce)
+
+        //button animations
+        restart_btn.startAnimation(buttonAnimation)
+        next_round_btn.startAnimation(buttonAnimation)
+        quit_btn.startAnimation(buttonAnimation)
 
 
-        gameText ?: run {
-            gameText = "Hmmm..."
-        }
-
-        val roundStatusTextView = findViewById<TextView>(R.id.round_result_title)
-        roundStatusTextView.text = gameText
+        round_result_title.text = gameText
 
         if (isWinner) {
             Splat_ImageView.visibility = View.INVISIBLE
@@ -45,7 +48,7 @@ class GameEndActivity : AppCompatActivity() {
 
 
         //next round button
-        findViewById<Button>(R.id.next_round_btn).setOnClickListener {
+        next_round_btn.setOnClickListener {
             next_round_btn.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
@@ -58,7 +61,7 @@ class GameEndActivity : AppCompatActivity() {
             startActivity(intent)
         }
         //restart button
-        findViewById<Button>(R.id.restart_btn).setOnClickListener {
+        restart_btn.setOnClickListener {
             restart_btn.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
@@ -66,7 +69,7 @@ class GameEndActivity : AppCompatActivity() {
             goToWifiPeerSetupActivity()
         }
         //quit button
-        findViewById<Button>(R.id.quit_btn).setOnClickListener {
+        quit_btn.setOnClickListener {
             quit_btn.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
@@ -74,6 +77,10 @@ class GameEndActivity : AppCompatActivity() {
 
             val intent = Intent(this@GameEndActivity, MainActivity::class.java)
             startActivity(intent)
+        }
+
+        gameText?: run {
+            gameText = "Error"
         }
     }
 

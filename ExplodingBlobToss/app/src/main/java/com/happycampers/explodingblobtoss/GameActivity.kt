@@ -14,7 +14,6 @@ import android.widget.*
 import com.happycampers.explodingblobtoss.Hosts.P2PClient
 import com.happycampers.explodingblobtoss.Hosts.P2PServer
 import kotlinx.android.synthetic.main.activity_game.*
-import java.lang.NullPointerException
 import java.lang.ref.WeakReference
 import java.net.InetAddress
 import java.util.*
@@ -31,15 +30,11 @@ class GameActivity : AppCompatActivity() {
     private lateinit var instructionText:TextView
     private lateinit var gameOverSplat:MediaPlayer
     private lateinit var throwSplat:MediaPlayer
-    private lateinit var audioSwitch:Switch
-    private lateinit var hapticSwitch: Switch
     companion object {
         var deviceState: DeviceP2PListeningState = DeviceP2PListeningState.UNDEFINED
         var turnsLeft: Int = -1
         lateinit var throwAnimation:Animation
         lateinit var  catchAnimation:Animation
-        lateinit var blob:ImageView
-
         var score: Int = 0
         var roundNumber: Int = 1
     }
@@ -48,22 +43,14 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        val pauseButton = findViewById<ImageView>(R.id.pause_btn)
-        val pauseMenu = findViewById<FrameLayout>(R.id.pause_menu)
-        val resumeButton = findViewById<Button>(R.id.resume_button)
-        val quitButton = findViewById<Button>(R.id.quit_button)
-
         guideArrow = findViewById<ImageView>(R.id.front_arrow)
 
         gameOverSplat = MediaPlayer.create(this,R.raw.game_over_splat)
         gameOverSplat.setVolume(0.1f,0.1f)
         throwSplat = MediaPlayer.create(this,R.raw.throw_splash)
         throwSplat.setVolume(0.1f,0.1f)
-        blob = findViewById(R.id.blob_ImageView)
         instructionText = findViewById(R.id.instructions)
         shakeDetector = ShakeDetector(this)
-        audioSwitch = findViewById(R.id.audio_switch)
-        hapticSwitch = findViewById(R.id.haptic_switch)
 
         throwAnimation= AnimationUtils.loadAnimation(this,R.anim.throw_blob)
         catchAnimation = AnimationUtils.loadAnimation(this,R.anim.catch_blob)
@@ -93,29 +80,49 @@ class GameActivity : AppCompatActivity() {
                 Log.d(TAG, "In onAnimationStart.")
             }
         })
+        throwAnimation.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationEnd(p0: Animation?) {
+                if (turnsLeft == 0) {
+                    score++
+                    roundNumber++
+
+                    deviceState = DeviceP2PListeningState.FINISHED
+                    startGameEndActivity(true, "You win!\nThe blob has exploded on your opponent.")
+                }
+                else {
+                    deviceState = DeviceP2PListeningState.RECEIVING
+                }
+            }
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+                Log.d(TAG, "In onAnimationStart.")
+            }
+        })
 
 
         //Pause Button
-        pauseButton.setOnClickListener {
-            pauseButton.performHapticFeedback(
+        pause_btn.setOnClickListener {
+            pause_btn.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
-            pauseMenu.visibility = View.VISIBLE
+            pause_menu.visibility = View.VISIBLE
             onPause()
         }
         //Resume Button
-        resumeButton.setOnClickListener {
-            resumeButton.performHapticFeedback(
+        resume_button.setOnClickListener {
+            resume_button.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
-            pauseMenu.visibility = View.INVISIBLE
+            pause_menu.visibility = View.INVISIBLE
             onResume()
         }
         //quit to menu
-        quitButton.setOnClickListener {
-            quitButton.performHapticFeedback(
+        quit_button.setOnClickListener {
+            quit_button.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
@@ -134,7 +141,7 @@ class GameActivity : AppCompatActivity() {
         if (deviceIsOwner!!) {
             turnsLeft = Random().nextInt(11) + 6
             deviceState = DeviceP2PListeningState.SENDING
-            blob.visibility = View.VISIBLE
+            blob_ImageView.visibility = View.VISIBLE
             guideArrow.visibility = View.VISIBLE
             instructionText.text = "Pass the blob before it explodes!"
             instructionText.visibility = View.VISIBLE
@@ -177,7 +184,7 @@ class GameActivity : AppCompatActivity() {
                 if (deviceState == DeviceP2PListeningState.SENDING) {
                     if (x > 0) {
                         catchAnimation.cancel()
-                        blob.clearAnimation()
+                        blob_ImageView.clearAnimation()
 
                         if (deviceIsOwner!!) {
                             P2PServer.Companion.StartServerForTransferTask().execute()
@@ -208,7 +215,7 @@ class GameActivity : AppCompatActivity() {
                 else if (deviceState == DeviceP2PListeningState.TURN_PROCESSING) {
                     if (x > 0) {
                         catchAnimation.cancel()
-                        blob.clearAnimation()
+                        blob_ImageView.clearAnimation()
                         deviceState = DeviceP2PListeningState.SENDING
                     }
 
@@ -248,41 +255,32 @@ class GameActivity : AppCompatActivity() {
 
     fun throwBlob(){
         guideArrow.visibility = View.INVISIBLE
-        blob.startAnimation(throwAnimation)
-        blob.visibility = View.INVISIBLE
+        blob_ImageView.startAnimation(throwAnimation)
+        blob_ImageView.visibility = View.INVISIBLE
         instructionText.text = "Catch the blob from your opponent!"
-        if(audioSwitch.isChecked){
+        if(audio_switch.isChecked){
             throwSplat.start()
         }
-        if (turnsLeft == 0) {
-            score++
-            roundNumber++
 
-            deviceState = DeviceP2PListeningState.FINISHED
-            startGameEndActivity(true, "You win!")
-        }
-        else {
-            deviceState = DeviceP2PListeningState.RECEIVING
-        }
     }
 
     fun catchBlob(turnCount: Int){
-        if(audioSwitch.isChecked){
+        if(audio_switch.isChecked){
             throwSplat.start()
         }
-        if(hapticSwitch.isChecked){
+        if(haptic_switch.isChecked){
             vibratePhone(100)
         }
 
-        blob.visibility = View.VISIBLE
-        blob.startAnimation(catchAnimation)
+        blob_ImageView.visibility = View.VISIBLE
+        blob_ImageView.startAnimation(catchAnimation)
         guideArrow.visibility = View.VISIBLE
         instructionText.text = "Pass the blob before it explodes!"
         instructionText.visibility = View.VISIBLE
 
         if (0 == turnCount) {
             roundNumber++
-            if(audioSwitch.isChecked){
+            if(audio_switch.isChecked){
                 gameOverSplat.start()
             }
             deviceState = DeviceP2PListeningState.FINISHED

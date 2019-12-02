@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.happycampers.explodingblobtoss.DeviceP2PListeningState
 import com.happycampers.explodingblobtoss.GameActivity
-import com.happycampers.explodingblobtoss.GameActivity.Companion.blob
 import com.happycampers.explodingblobtoss.GameActivity.Companion.catchAnimation
 import com.happycampers.explodingblobtoss.GameActivity.Companion.throwAnimation
 import com.happycampers.explodingblobtoss.R
@@ -162,7 +161,7 @@ class P2PClient {
                     val messageCode = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
                     if (messageCode == -2) {
-                        activity.get()!!.startGameEndActivity(true, "You win!")
+                        activity.get()!!.startGameEndActivity(true, "You win!\nYour opponent has dropped the blob!")
                     }
                     else {
                         activity.get()!!.catchBlob(turnCount = messageCode)

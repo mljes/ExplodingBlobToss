@@ -2,15 +2,7 @@ package com.happycampers.explodingblobtoss.Hosts
 
 import android.os.AsyncTask
 import android.util.Log
-import android.view.View
-import android.widget.TextView
-import com.happycampers.explodingblobtoss.DeviceP2PListeningState
 import com.happycampers.explodingblobtoss.GameActivity
-import com.happycampers.explodingblobtoss.GameActivity.Companion.blob
-import com.happycampers.explodingblobtoss.GameActivity.Companion.catchAnimation
-import com.happycampers.explodingblobtoss.GameActivity.Companion.throwAnimation
-import com.happycampers.explodingblobtoss.R
-import kotlinx.android.synthetic.main.activity_game.view.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.lang.ref.WeakReference
@@ -65,7 +57,7 @@ class P2PServer {
                     val messageString = outputStream.toString()
 
                     println(
-                        "MESSAGE FROM CLIENT: " + messageString
+                        "MESSAGE FROM CLIENT: $messageString"
                     )
 
                     this.message = messageString
@@ -92,7 +84,7 @@ class P2PServer {
                     val messageCode = result.split(" ", ignoreCase = true, limit = 0)[0].toInt()
 
                     if (messageCode == -2) {
-                        activity.get()!!.startGameEndActivity(true, "You win!")
+                        activity.get()!!.startGameEndActivity(true, "You win!\nYour opponent has dropped the blob!")
                     }
                     else {
                         activity.get()!!.catchBlob(messageCode)
@@ -111,7 +103,7 @@ class P2PServer {
                     openServerSocket()
                 }
                 catch (e: Exception) {
-                    Log.d(TAG_TRANSFER, "Couldn't open server socket: " + e.toString())
+                    Log.d(TAG_TRANSFER, "Couldn't open server socket: $e")
                 }
 
                 return null

@@ -150,7 +150,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
             )
 
             if (!isWifiP2pEnabled) {
-                Toast.makeText(this, "P2P is turned off.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Please enable Wifi-Direct", Toast.LENGTH_LONG).show()
 
             }else {
 
@@ -158,7 +158,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
                     override fun onSuccess() {
                         Toast.makeText(
                             this@WifiPeerSetupActivity,
-                            "STARTED PEER DISCOVERY",
+                            "Searching for players",
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -166,7 +166,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
                     override fun onFailure(reasonCode: Int) {
                         Toast.makeText(
                             this@WifiPeerSetupActivity,
-                            "FAILED TO START PEER DISCOVERY",
+                            "Failed to find any nearby players",
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -205,7 +205,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
             }
             override fun onFailure(reason: Int) {
-                Toast.makeText(this@WifiPeerSetupActivity, "CONNECT FAILED", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@WifiPeerSetupActivity, "Failed to connect to player", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -226,7 +226,7 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
 
     override fun onChannelDisconnected() {
         if (manager != null && !retryChannel) {
-            Toast.makeText(this@WifiPeerSetupActivity, "Channel lost. Trying again", Toast.LENGTH_LONG).show()
+            Log.e("onChannelDisconnected", "Channel lost. Trying again")
             discoverPeers()
             retryChannel = true
             manager.initialize(this@WifiPeerSetupActivity, mainLooper, this)
@@ -248,10 +248,10 @@ class WifiPeerSetupActivity : AppCompatActivity(), WifiP2pManager.ChannelListene
                 || fragment.getDevice().status == WifiP2pDevice.INVITED) {
                 manager.cancelConnect(channel, object: ActionListener {
                     override fun onSuccess() {
-                        Toast.makeText(this@WifiPeerSetupActivity, "Aborting connection", Toast.LENGTH_LONG).show()
+                        Log.e("DisconnectOnSuccess", "Aborting connection")
                     }
                     override fun onFailure(reasonCode: Int) {
-                        Toast.makeText(this@WifiPeerSetupActivity, "Connect abort request failed.\nReason code: " + reasonCode, Toast.LENGTH_LONG).show()
+                        Log.e("DisconnectOnFailure", "Connect abort request failed.\nReason code: $reasonCode")
                     }
                 })
             }

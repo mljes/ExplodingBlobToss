@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
-import android.widget.Toast
 import kotlin.math.abs
 
 /*
@@ -75,7 +74,6 @@ class ShakeDetector(val context: Context) {
                 lastX = x
                 lastY = y
                 lastZ = z
-                Toast.makeText(context, "No Motion detected", Toast.LENGTH_SHORT).show()
 
             } else {
                 timeDiff = now - lastUpdate
@@ -94,8 +92,6 @@ class ShakeDetector(val context: Context) {
                             // trigger shake event
                             listener?.onShake(force, x, y, z)
                         } else {
-                            Toast.makeText(context, "No Motion detected",
-                                Toast.LENGTH_SHORT).show()
 
                         }
                         lastShake = now
@@ -105,8 +101,6 @@ class ShakeDetector(val context: Context) {
                     lastZ = z
                     lastUpdate = now
 
-                } else {
-                    Toast.makeText(context, "No Motion detected", Toast.LENGTH_SHORT).show()
                 }
             }
         }
