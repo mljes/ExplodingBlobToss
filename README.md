@@ -171,23 +171,23 @@ The first screen the user reaches is the "Main Menu" where the user can choose t
 The first screen after starting the game is the "Connect to Player" screen that is used to connect two player devices together via wifi-direct. After the user connects to another player it will move them to the "Main Game Activity" where users throw the object back and forth using motion gestures. Last is the "End Round" screen that displays after the round is over. The purpose of this screen is to let users decide whether to play again with same player, start a new connection with a different player or quit. 
 
 ## Implementation
-<img src="image/Main-Menu.jpg" alt="Main Menu">
+<img src="images/Main-Menu.jpg" alt="Main Menu">
 Main menu screen users can change the audio and vibrate game settings, start the game, or read the tutorial notes
 
-<img src="image/Tutorial-Screen.png" alt="tutorial">
+<img src="images/Tutorial-Screen.png" alt="tutorial">
 Here users can learn how to play then start the game
 
-<img src="image/Connect-To-Peers.png" alt="connect to peers">
+<img src="images/Connect-To-Peers.png" alt="connect to peers">
 Users search for a nearby player to connect with via wifi-direct then the game will automatically start. 
 
-<img src="image/gameplay_throwing.jpg" alt="Main Gameplay">
+<img src="images/gameplay_throwing.jpg" alt="Main Gameplay">
 player one starts with the blob they motion the phone forward to throw and the opponet motions forward to catch.
 if the blob is dropped or explodes the game will end and the players will be automatically moved to their respective win/loss pages.
 
-<img src="image/Win-Screen-Drop.png" alt="Win Screen">
+<img src="images/Win-Screen-Drop.png" alt="Win Screen">
 If the opponent drops the blob you win. Users can start another round (back to main gameplay), restart to make a new connection (back to connect to peers screen) or quit to the main menu
 
-<img src="image/Loss-Explode.jpg" alt="Loss Explode">
+<img src="images/Loss-Explode.jpg" alt="Loss Explode">
 After a random number of tosses the blob will explode and the user that last caught  it looses. 
 Screenshots of all the primary views (screens) and a brief discussion of the
 interactions the user performs on the screens.
