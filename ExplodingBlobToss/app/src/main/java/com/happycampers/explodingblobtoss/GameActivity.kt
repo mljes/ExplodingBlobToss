@@ -60,6 +60,9 @@ class GameActivity : AppCompatActivity() {
             override fun onAnimationEnd(p0: Animation?) {
                 if (deviceState == DeviceP2PListeningState.TURN_PROCESSING) {
                     deviceState = DeviceP2PListeningState.FINISHED
+                    if(MainActivity.audioSwitch.isChecked){
+                        gameOverSplat.start()
+                    }
                     startGameEndActivity(false, "You dropped the blob!")
 
                     if (deviceIsOwner!!) {
@@ -100,37 +103,6 @@ class GameActivity : AppCompatActivity() {
                 Log.d(TAG, "In onAnimationStart.")
             }
         })
-
-
-        //Pause Button
-        pause_btn.setOnClickListener {
-            pause_btn.performHapticFeedback(
-                HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-            )
-            pause_menu.visibility = View.VISIBLE
-            onPause()
-        }
-        //Resume Button
-        resume_button.setOnClickListener {
-            resume_button.performHapticFeedback(
-                HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-            )
-            pause_menu.visibility = View.INVISIBLE
-            onResume()
-        }
-        //quit to menu
-        quit_button.setOnClickListener {
-            quit_button.performHapticFeedback(
-                HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-            )
-            val intent = Intent(this,MainActivity::class.java).apply {
-                //?
-            }
-            startActivity(intent)
-        }
 
         checkShakeDetectorSupported()
     }
@@ -253,17 +225,17 @@ class GameActivity : AppCompatActivity() {
         blob_ImageView.startAnimation(throwAnimation)
         blob_ImageView.visibility = View.INVISIBLE
         instructionText.text = "Catch the blob from your opponent!"
-        if(audio_switch.isChecked){
+        if(MainActivity.audioSwitch.isChecked){
             throwSplat.start()
         }
 
     }
 
     fun catchBlob(turnCount: Int){
-        if(audio_switch.isChecked){
+        if(MainActivity.audioSwitch.isChecked){
             throwSplat.start()
         }
-        if(haptic_switch.isChecked){
+        if(MainActivity.vibrateSwitch.isChecked){
             vibratePhone(100)
         }
 
@@ -275,7 +247,7 @@ class GameActivity : AppCompatActivity() {
 
         if (0 == turnCount) {
             roundNumber++
-            if(audio_switch.isChecked){
+            if(MainActivity.audioSwitch.isChecked){
                 gameOverSplat.start()
             }
             deviceState = DeviceP2PListeningState.FINISHED

@@ -5,9 +5,9 @@
     <string name="game_title_text">Exploding Blob Toss</string>
     <string name="start_game_btn">Start Game</string>
     <string name="tutorial_btn">Tutorial</string>
-
     <string name="back_btn">Back</string>
     <string name="connected_players_title">Connected Players</string>
+    <string name="Settings_title">Settings</string>
 
     <string name="group_owner_text">THE OWNER</string>
     <string name="yes">YES</string>
@@ -23,7 +23,7 @@
     <string name="label_me">Me</string>
     <string name="label_peers">Available Players</string>
     <string name="empty_message">Refresh the list to show nearby players</string>
-    <string name="connect_peer_button">Connect</string>
+    <string name="connect_peer_button">Connect &amp; Play</string>
     <string name="connect_peers_title">Connect To Peers</string>
     <string name="detected_devices_text">Detected Devices:</string>
     <!--Main Game Activity-->

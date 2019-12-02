@@ -73,6 +73,7 @@
         android:layout_marginStart="120dp"
         android:layout_marginEnd="120dp"
         android:layout_marginBottom="32dp"
+        android:background="@drawable/accent_button"
         android:text="@string/connect_peer_button"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
