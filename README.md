@@ -84,7 +84,7 @@ Users receive haptic feedback when they press buttons, when the blob is passed t
 
 ## Installation Notes
 
-None. The app can be installed normally using the provided APK. **(LINK)**
+None. The app can be installed normally using the provided APK.
 
 ## Final Project Status
 
@@ -115,7 +115,111 @@ It was very difficult to establish a connection between the two devices as we we
   
 Upon creating the connections, we had to try sending messages between the devices using a simple button system as a precursor to the in-game communication. This presented its own set of difficulties as WiFi Direct communications use sockets. We were not familiar with network socket programming on Android. Network socket programming requires asyncronous tasks, which created new issues for us: we now had to deal with race conditions and concurrency issues. The code for sending messages exists in the `P2PServer` and `P2PClient` classes in the Hosts package, and sampled below:  
   
+P2PServer:  
+```java
+...
+class ServerMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>): AsyncTask<Int, Void?, Void>() {
+            override fun doInBackground(vararg turnsLeft: Int?): Void? {
+                sendData(address, turnsLeft[0]!!)
+                return null
+            }
+
+            private fun sendData(socketAddress: InetAddress, turnsLeft: Int) {
+                var message = ""
+
+                try {
+                    if (transferServerSocket == null) {
+                        transferServerSocket = ServerSocket(8993, 0, socketAddress)
+                    }
+
+                    Log.d(TAG_TRANSFER, "IS SOCKET BOUND: " + transferServerSocket!!.isBound)
+
+                    Log.d(TAG_TRANSFER, "Sending ")
+
+                    val outputStream: OutputStream = transferClientSocket!!.getOutputStream()
+                    val byteArrayOutputStream = ByteArrayOutputStream(32)
+
+                    Log.d(TAG_TRANSFER, "AFTER OUTPUTSTREAMS")
+
+                    message = "$turnsLeft THIS IS THE SERVER'S MESSAGE"
+
+                    Log.d(TAG_TRANSFER, "AFTER SETTING MESSSAGE")
+
+                    byteArrayOutputStream.write(message.toByteArray())
+                    byteArrayOutputStream.writeTo(outputStream)
+
+                    Log.d(TAG_TRANSFER, "AFTER WRITING TO OUTPUT STREAMS")
+
+                    outputStream.flush()
+                    byteArrayOutputStream.flush()
+
+                    Log.d(TAG_TRANSFER, "AFTER FLUSHING OUTPUT STREAMS")
+                    outputStream.close()
+                    byteArrayOutputStream.close()
+
+                } catch (e: java.lang.Exception) {
+                    Log.d("SERVERTRANSFERSERVICE", e.toString())
+
+                }
+            }
+
+            override fun onPostExecute(result: Void?) {
+                activity.get()!!.throwBlob()
+            }
+        }
+...
 ```
+
+P2PClient:  
+```java
+...
+class ClientMessageTransferTask(val address: InetAddress, val activity: WeakReference<GameActivity>) : AsyncTask<Int, Void?, Void>() {
+            private val TAG = "P2PClient.TRANSFER"
+            private var socket: Socket? = null
+
+
+
+            override fun doInBackground(vararg turnsLeft: Int?): Void? {
+                sendData(address, turnsLeft[0]!!)
+                return null
+            }
+
+            private fun sendData(serverAddress: InetAddress, turnsLeft: Int) {
+                if (socket == null) {
+                    socket = Socket()
+                }
+
+                var message = ""
+
+                try {
+                    if (socket != null && !socket!!.isBound) {
+                        socket?.reuseAddress = true
+                        socket?.bind(null)
+                    }
+
+                    if (socket != null && !socket!!.isConnected) {
+                        socket?.connect(InetSocketAddress(serverAddress, 8997))
+                    }
+
+                    var outputStream: OutputStream = socket!!.getOutputStream()
+                    var byteArrayOutputStream = ByteArrayOutputStream(32)
+
+                    message = "$turnsLeft THIS IS THE CLIENT'S MESSAGE"
+
+                    byteArrayOutputStream.write(message.toByteArray())
+                    byteArrayOutputStream.writeTo(outputStream)
+
+                    outputStream.flush()
+                    byteArrayOutputStream.flush()
+
+                    byteArrayOutputStream.close()
+                    outputStream.close()
+                    socket!!.close()
+                } catch (e: Exception) {
+                    Log.d(TAG, e.toString())
+                }
+            }
+...
 ```
   
 Our first network socket programming issue arouse when we could not figure out how to connect the devices for 2-way communication. Whereas a program such as a P2P chat client might have a single connection between a server socket and a client socket and send messages back and forth between the sockets, we required that the devices each be able to send and receive messages simultaneously, which on the single-connection model would cause blockages in the sockets. We encountered this issues when first trying to set up the connections. We solved this issue by creating two separate connections between the devices: one connection is for messages sent from the client to the server and the other is for messages sent from the server to the client. 
@@ -135,7 +239,7 @@ P2PServer.Companion.MessageServerAsyncTask(activityReference).executeOnExecutor(
 We were using the former instead of the latter, which was preventing the server from opening its receiving port properly. Once we fixed this, we were able to send messages back and forth.
 
 ### Concurrency issues
-Certain app functionalities presented concurrency issues as the devices would sometimes not show their respective users the same information. We first encountered this when sending "tosses" between devices. When a user tosses the blob, their device must tell the other device that this has occurred so that the other device can perform its animation to show it has received the blob. At the same time, the receiving device must not try to send a "toss" message when it is meant to be receiving, and the sending device must not expect to receive the blob when it is meant to be sending. To overcome these issues, we developed a set of Device States to indicate whether the device should be receiving or sending the blob.
+Certain app functionalities presented concurrency issues as the devices would sometimes not show their respective users the same information. We first encountered this when sending "tosses" between devices. When a user tosses the blob, their device must tell the other device that this has occurred so that the other device can perform its animation to show it has received the blob. At the same time, the receiving device must not try to send a "toss" message when it is meant to be receiving, and the sending device must not expect to receive the blob when it is meant to be sending. To overcome these issues, we developed a set of Device States to indicate whether the device should be receiving or sending the blob. The states are stored in an `enum` that is shown below:
 ```java
 enum class DeviceP2PListeningState {
     RECEIVING, SENDING, UNDEFINED, FINISHED, TURN_PROCESSING
