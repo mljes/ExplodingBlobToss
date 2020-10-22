@@ -34,10 +34,10 @@ Exploding Blob Toss is a mobile game designed to bring people together. It featu
 
 ## Group members
 
-| Name                   | Banner ID  | Email               |
-| ---------------------- | ---------- | ------------------- |
-| Samantha Butler        | -  | s.butler@dal.ca     |
-| Maria Jessen           | -  | mjessen@dal.ca     |
+| Name                   |
+| ---------------------- | 
+| Samantha Butler        |
+| Maria Jessen           |
 
 ## Description
 
